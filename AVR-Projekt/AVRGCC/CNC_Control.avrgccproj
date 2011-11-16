@@ -21,7 +21,7 @@
     <AssemblyName>AVRGCC2</AssemblyName>
     <Name>CNC_Control</Name>
     <RootNamespace>AVRGCC2</RootNamespace>
-    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
     <avrtoolinterface>ISP</avrtoolinterface>
     <com_atmel_avrdbg_tool_ispmk2>
       <ToolType>com.atmel.avrdbg.tool.ispmk2</ToolType>
@@ -29,7 +29,7 @@
       <ToolNumber>000200078556</ToolNumber>
       <Channel>
         <host>127.0.0.1</host>
-        <port>1042</port>
+        <port>1047</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -87,6 +87,12 @@
     <GenerateEepFile>True</GenerateEepFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="gocnc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gocnc.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

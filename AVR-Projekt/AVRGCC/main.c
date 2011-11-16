@@ -17,6 +17,7 @@ DESCRIPTION:
 #include <avr/delay.h>
 
 #include "uart.h"
+#include "gocnc.h"
 
 /* define CPU frequency in Mhz here */
 #ifndef F_CPU
@@ -40,7 +41,10 @@ unsigned char input[128];
 
 int main(void)
 { 
-	      
+	// CNC-Outputs
+	DDRB |= (1 << PB7)|(1 << PB6)|(1 << PB5)|(1 << PB4)|(1 << PB3)|(1 << PB2)|(1 << PB1)|(1 << PB0);    
+	
+	 
 	DDRD |= (1 << PD7)|(1 << PD6)|(1 << PD5);
 	
     /*
@@ -59,29 +63,16 @@ int main(void)
 	uart_putc(CMD_LF);
 	uart1_putc(CMD_CR);
 
-	int c = 0;
-
 	while (1)
 	{
-		if (input[c] != NULL )
-		{
-			uart1_putc(input[c]);
-			c++;
-		}
-		
-		
-
-		
-		
-		if (PIND & (1<<PD4))
-		{
-			uart1_puts("dir");
-			uart1_putc(CMD_CR);
-			_delay_ms(1000);		
+		sqare();
+		while(1){
 		}
 	}
-}
 
+		
+		
+}
 
 void UART1_RX_INT(){
 	
