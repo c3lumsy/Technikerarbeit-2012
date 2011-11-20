@@ -29,7 +29,7 @@
       <ToolNumber>000200078556</ToolNumber>
       <Channel>
         <host>127.0.0.1</host>
-        <port>1047</port>
+        <port>1044</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -47,6 +47,17 @@
         </InterfaceProperties>
       </ToolOptions>
     </com_atmel_avrdbg_tool_ispmk2>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName xmlns="">AVR Simulator</ToolName>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <Channel xmlns="">
+        <host>127.0.0.1</host>
+        <port>1044</port>
+        <ssl>False</ssl>
+      </Channel>
+    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -80,6 +91,11 @@
       </AvrGcc>
     </ToolchainSettings>
     <MemorySettings>
+      <MemorySegments>
+  <InitialStack IsEnabled="0">
+    <Address>0x4000</Address>
+  </InitialStack>
+</MemorySegments>
     </MemorySettings>
     <GenerateHexFile>True</GenerateHexFile>
     <GenerateMapFile>True</GenerateMapFile>

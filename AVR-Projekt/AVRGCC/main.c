@@ -39,10 +39,10 @@ DESCRIPTION:
 // Definition Arrays
 unsigned char input[128];
 
-int main(void)
+void main(void)
 { 
-	// CNC-Outputs
-	DDRB |= (1 << PB7)|(1 << PB6)|(1 << PB5)|(1 << PB4)|(1 << PB3)|(1 << PB2)|(1 << PB1)|(1 << PB0);    
+	// CNC-Outputs / PA6 Ref-Switch
+	DDRA |= (1 << PA7)|(1 << PA5)|(1 << PA4)|(1 << PA3)|(1 << PA2)|(1 << PA1)|(1 << PA0);    
 	
 	 
 	DDRD |= (1 << PD7)|(1 << PD6)|(1 << PD5);
@@ -63,17 +63,21 @@ int main(void)
 	uart_putc(CMD_LF);
 	uart1_putc(CMD_CR);
 
+	
+	uart_puts("All Axis are in Position!");
+	axis_ref();
+
 	while (1)
 	{
-		sqare();
-		while(1){
-		}
+	
+		go_cnc();
+		
 	}
 
 		
 		
 }
-
+// Interrupts
 void UART1_RX_INT(){
 	
 	char uart1_trans;

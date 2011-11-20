@@ -11,6 +11,7 @@
 
 extern void go_cnc(void);
 extern void sqare(void);
+extern void axis_ref(void);
 
 
 
