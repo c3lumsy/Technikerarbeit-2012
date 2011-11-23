@@ -1,5 +1,5 @@
 /************************************************************************
-Title:			goCNC-Header-File
+Title:			VNC1L-File
 Version:		1.0
 Created:		11/22/2011
 
@@ -15,15 +15,3 @@ Author:			Dennis Hohmann
 Email:			hohmannd@web.de
 Copyright:		(C)2012 Dennis Hohmann
 ************************************************************************/ 
-
-
-#ifndef GOCNC_H_
-#define GOCNC_H_
-
-extern void go_cnc(void);
-extern void sqare(void);
-extern void axis_ref(void);
-
-
-
-#endif /* GOCNC_H_ */

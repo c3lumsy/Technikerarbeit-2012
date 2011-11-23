@@ -29,7 +29,7 @@
       <ToolNumber>000200078556</ToolNumber>
       <Channel>
         <host>127.0.0.1</host>
-        <port>1044</port>
+        <port>1042</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -48,13 +48,13 @@
       </ToolOptions>
     </com_atmel_avrdbg_tool_ispmk2>
     <com_atmel_avrdbg_tool_simulator>
-      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
-      <ToolName xmlns="">AVR Simulator</ToolName>
-      <ToolNumber xmlns="">
+      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName>AVR Simulator</ToolName>
+      <ToolNumber>
       </ToolNumber>
-      <Channel xmlns="">
+      <Channel>
         <host>127.0.0.1</host>
-        <port>1044</port>
+        <port>1042</port>
         <ssl>False</ssl>
       </Channel>
     </com_atmel_avrdbg_tool_simulator>
@@ -92,10 +92,10 @@
     </ToolchainSettings>
     <MemorySettings>
       <MemorySegments>
-  <InitialStack IsEnabled="0">
-    <Address>0x4000</Address>
-  </InitialStack>
-</MemorySegments>
+        <InitialStack IsEnabled="0">
+          <Address>0x4000</Address>
+        </InitialStack>
+      </MemorySegments>
     </MemorySettings>
     <GenerateHexFile>True</GenerateHexFile>
     <GenerateMapFile>True</GenerateMapFile>
@@ -103,6 +103,9 @@
     <GenerateEepFile>True</GenerateEepFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="globdef.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="gocnc.c">
       <SubType>compile</SubType>
     </Compile>
@@ -116,6 +119,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="vnc1l.c">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

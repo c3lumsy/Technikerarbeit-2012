@@ -1,14 +1,21 @@
-/*************************************************************************
-Title:    example program for the Interrupt controlled UART library
-Author:   Peter Fleury <pfleury@gmx.ch>   http://jump.to/fleury
-File:     $Id: test_uart.c,v 1.4 2005/07/10 11:46:30 Peter Exp $
-Software: AVR-GCC 3.3
-Hardware: any AVR with built-in UART, tested on AT90S8515 at 4 Mhz
+/************************************************************************
+Title:			MAIN-File
+Version:		1.0
+Created:		11/22/2011
 
-DESCRIPTION:
-          This example shows how to use the UART library uart.c
+Project:		Technikerprojekt 2012
+				CNC-Steuerung
 
-*************************************************************************/
+Software:		AVR-GCC 4.1, AVR Libc 1.4
+Hardware:		AVR ATmega1284 @20 MHz
+
+Description:
+						
+Author:			Dennis Hohmann
+Email:			hohmannd@web.de
+Copyright:		(C)2012 Dennis Hohmann
+************************************************************************/ 
+
 #include <stdlib.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -16,17 +23,11 @@ DESCRIPTION:
 #include <avr/pgmspace.h>
 #include <avr/delay.h>
 
+#include "globdef.h"
 #include "uart.h"
 #include "gocnc.h"
 
-/* define CPU frequency in Mhz here */
-#ifndef F_CPU
-#define F_CPU 20000000UL
-#endif
 
-/* define BAUD of UART0 and UART1 */
-#define UART_BAUD_RATE      19200      
-#define UART1_BAUD_RATE     9600
 
 #define CMD_CR 0x0D
 #define CMD_LF 0x0A
@@ -34,26 +35,41 @@ DESCRIPTION:
 #define VNC_CMD_READ "rd "
 
 #define FILE "text.txt"
-
-
+	
 // Definition Arrays
 unsigned char input[128];
+
+const char POS_OUT(int32_t POS)
+{
+	char out[8];
+	unsigned char buffer[3];
+	int32_t x= POS*((x_way_pr/x_step_pr)*10000);
+	if (x>0)
+	{out[0]=0x2B;} 
+	else
+	{out[0]=0x2D;}
+	uint16_t y = (int32_t)x/10000;
+	itoa(y,buffer,10);
+	out[1]= buffer[0];
+	out[2]= buffer[1];
+	out[3]= buffer[2];
+	out[4]=0x2C;
+	uint16_t z = (int32_t)x%10000;
+	itoa(z,buffer,10);
+	out[5]= buffer[0];
+	out[6]= buffer[1];
+	out[7]= buffer[2];
+}
 
 void main(void)
 { 
 	// CNC-Outputs / PA6 Ref-Switch
-	DDRA |= (1 << PA7)|(1 << PA5)|(1 << PA4)|(1 << PA3)|(1 << PA2)|(1 << PA1)|(1 << PA0);    
+	DDRA |= _BV(7)|_BV(5)|_BV(4)|_BV(3)|_BV(2)|_BV(1)|_BV(0);
+	    
+	DDRD |= _BV(7)|_BV(6)|_BV(5);
 	
-	 
-	DDRD |= (1 << PD7)|(1 << PD6)|(1 << PD5);
 	
-    /*
-     *  Initialize UART library, pass baudrate and AVR cpu clock
-     *  with the macro 
-     *  UART_BAUD_SELECT() (normal speed mode )
-     *  or 
-     *  UART_BAUD_SELECT_DOUBLE_SPEED() ( double speed mode)
-     */
+	
     uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 	uart1_init( UART_BAUD_SELECT(UART1_BAUD_RATE,F_CPU) ); 
 
@@ -63,10 +79,19 @@ void main(void)
 	uart_putc(CMD_LF);
 	uart1_putc(CMD_CR);
 
+	sX_IST = 5308;
 	
+#ifdef PCmode
+	uart_puts("PCmode enable!");
 	uart_puts("All Axis are in Position!");
-	axis_ref();
+	
 
+
+uart_putc(POS_OUT(sX_IST));
+
+#endif
+axis_ref();
+	
 	while (1)
 	{
 	
