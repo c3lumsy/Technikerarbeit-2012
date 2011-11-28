@@ -23,6 +23,10 @@ Copyright:		(C)2012 Dennis Hohmann
 extern void go_cnc(void);
 extern void sqare(void);
 extern void axis_ref(void);
+extern int32_t fmm_to_ium(float f);
+
+extern void z_move(int32_t way_um, uint16_t trip_speed);
+extern void xy_move (uint16_t x_way_um, uint16_t y_way_um, uint16_t trip_speed);
 
 
 

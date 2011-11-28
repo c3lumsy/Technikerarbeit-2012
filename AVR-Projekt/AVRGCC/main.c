@@ -35,30 +35,92 @@ Copyright:		(C)2012 Dennis Hohmann
 #define VNC_CMD_READ "rd "
 
 #define FILE "text.txt"
-	
-// Definition Arrays
-unsigned char input[128];
 
 const char POS_OUT(int32_t POS)
 {
-	char out[8];
-	unsigned char buffer[3];
-	int32_t x= POS*((x_way_pr/x_step_pr)*10000);
+unsigned	char out[10];
+	char buffer[3];
+	int32_t x= POS*(x_way_pr/x_step_pr)*10000;
 	if (x>0)
-	{out[0]=0x2B;} 
+	{out[0]='+';} 
 	else
-	{out[0]=0x2D;}
+	{out[0]='-';}
 	uint16_t y = (int32_t)x/10000;
-	itoa(y,buffer,10);
-	out[1]= buffer[0];
-	out[2]= buffer[1];
-	out[3]= buffer[2];
-	out[4]=0x2C;
+	itoa(abs(y),buffer,10);
+	if (buffer[1] == NULL)
+		{
+			out[1]= '0';
+			out[2]= '0';
+			out[3]= buffer[0];
+		}				
+		else
+		{
+			if (buffer[2] == NULL)
+			{
+				out[1]= '0';
+				out[2]= buffer[0];
+				out[3]= buffer[1];
+			} 
+			else
+			{
+			out[1]= buffer[0];
+			out[2]= buffer[1];
+			out[3]= buffer[2];			
+			}
+		}
+		
+	out[4]='.';
 	uint16_t z = (int32_t)x%10000;
-	itoa(z,buffer,10);
-	out[5]= buffer[0];
-	out[6]= buffer[1];
-	out[7]= buffer[2];
+	itoa(abs(z),buffer,10);
+	
+		if (buffer[1] == NULL)
+		{
+			out[5]= '0';
+			out[6]= '0';
+			out[7]= buffer[0];
+		}				
+		else
+		{
+			if (buffer[2] == NULL)
+			{
+				out[5]= '0';
+				out[6]= buffer[0];
+				out[7]= buffer[1];
+			} 
+			else
+			{
+			out[5]= buffer[0];
+			out[6]= buffer[1];
+			out[7]= buffer[2];			
+			}
+		}
+		out[8]='m';
+		out[9]='m';
+		
+				uart_putc(out[0]);
+				uart_putc(out[1]);
+				uart_putc(out[2]);
+				uart_putc(out[3]);
+				uart_putc(out[4]);
+				uart_putc(out[5]);
+				uart_putc(out[6]);
+				uart_putc(out[7]);
+				uart_putc(out[8]);
+				uart_putc(out[9]);
+		return out;		
+}
+
+void POS_OUT_UART()
+{
+	uart_putc(CMD_CR);
+	uart_puts("Z Pos: ");
+	POS_OUT(sZ_IST);
+	uart_putc(CMD_CR);
+	uart_puts("X Pos: ");
+	POS_OUT(sX_IST);
+	uart_putc(CMD_CR);
+	uart_puts("Y Pos: ");
+	POS_OUT(sY_IST);	
 }
 
 void main(void)
@@ -79,43 +141,29 @@ void main(void)
 	uart_putc(CMD_LF);
 	uart1_putc(CMD_CR);
 
-	sX_IST = 5308;
+
+	axis_ref();
+	go_cnc();
+	
 	
 #ifdef PCmode
 	uart_puts("PCmode enable!");
 	uart_puts("All Axis are in Position!");
-	
-
-
-uart_putc(POS_OUT(sX_IST));
+	POS_OUT_UART();
 
 #endif
-axis_ref();
-	
-	while (1)
-	{
-	
-		go_cnc();
-		
-	}
-
-		
-		
+			
 }
+
 // Interrupts
 void UART1_RX_INT(){
 	
 	char uart1_trans;
-	int i = 0;
-
+	
 		uart1_trans = uart1_getc();
 		if (uart1_trans != NULL)
 		{
-			if (i <= 128)
-			{
-				input[i] = uart1_trans;
-				i++;
-			}
+
 		}
 }
 

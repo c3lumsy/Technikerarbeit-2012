@@ -25,7 +25,9 @@ Copyright:		(C)2012 Dennis Hohmann
 #include "uart.h"
 #include "globdef.h"
 
-#define speed 300	// Speed
+#define v_max 700	// max speed 15mm/s
+#define v_1 1000 
+#define v_ref 1000	// ref speed
 
 #define x_tact_h (CNC_PORT |= _BV(1));
 #define x_tact_l (CNC_PORT &= ~_BV(1));
@@ -67,10 +69,10 @@ int32_t fmm_to_ium(float f)
 		return i;
 	}
 	
-uint32_t i_round_1000(uint32_t i)
+uint16_t i_round_1000(uint32_t i)
 	{
-		uint32_t o = i/1000;
-		uint32_t j = i%1000;
+		uint16_t o = i/1000;
+		uint16_t j = i%1000;
  		if (j >= 500)
 		{
 			o++;
@@ -81,22 +83,26 @@ uint32_t i_round_1000(uint32_t i)
 	
 // bis hier her!	
 	
+
 void x_step (uint16_t trip_speed)
 	{
-			_delay_us(trip_speed);
 			x_tact_h;
-			_delay_us(trip_speed/7);
+			_delay_us(trip_speed/2);
 			x_tact_l;
+			_delay_us(trip_speed);
 	}
 void x_move (int32_t way_um, uint16_t trip_speed){
 	// select direction
 		if (way_um > 0)
 			{x_CCW;} 
 		else
-			{x_CW;}
+			{
+			x_CW;
+			way_um = -(way_um);
+			}
 		
 	// way to steps
-		uint32_t steps = (uint32_t)x_way_step * abs(way_um);
+		uint32_t steps = way_um * x_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -110,9 +116,8 @@ void x_move (int32_t way_um, uint16_t trip_speed){
 
 void y_step (uint16_t trip_speed)
 	{
-			_delay_us(trip_speed);
 			y_tact_h;
-			_delay_us(trip_speed/7);
+			_delay_us(trip_speed);
 			y_tact_l;
 	}
 void y_move (int32_t way_um, uint16_t trip_speed){
@@ -120,10 +125,13 @@ void y_move (int32_t way_um, uint16_t trip_speed){
 		if (way_um > 0)
 			{y_CCW;} 
 		else
-			{y_CW;}
+			{
+			y_CW;
+			way_um = -(way_um);
+			}
 		
 	// way to steps
-		uint32_t steps = (uint32_t)y_way_step * abs(way_um);
+		uint32_t steps = way_um * y_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -137,9 +145,8 @@ void y_move (int32_t way_um, uint16_t trip_speed){
 
 void z_step (uint16_t trip_speed)
 	{
-			_delay_us(trip_speed);
 			z_tact_h;
-			_delay_us(trip_speed/7);
+			_delay_us(trip_speed);
 			z_tact_l;
 	}
 void z_move (int32_t way_um, uint16_t trip_speed){
@@ -147,10 +154,13 @@ void z_move (int32_t way_um, uint16_t trip_speed){
 		if (way_um > 0)
 			{z_CW;} 
 		else
-			{z_CCW;}
+			{
+			z_CCW;
+			way_um = -(way_um);
+			}
 		
 	// way to steps
-		uint32_t steps = (uint32_t)z_way_step * abs(way_um);
+		uint32_t steps = way_um * z_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -162,14 +172,13 @@ void z_move (int32_t way_um, uint16_t trip_speed){
 		}	
 }
 
-
-
-void xy_move (uint16_t x_way_um, uint16_t y_way_um, uint16_t trip_speed)
+void xy_move (uint32_t x_way_um, uint32_t y_way_um, uint16_t trip_speed)
 	{
-		uint16_t step_counter;
-		float x_steps, y_steps;
-				x_steps = x_way_step * x_way_um;
-				y_steps = y_way_step * y_way_um;
+		uint32_t step_counter;
+		uint32_t x_steps = x_way_um * x_way_step;
+		uint32_t y_steps = y_way_um * y_way_step;
+		x_steps = i_round_1000(x_steps);
+		y_steps = i_round_1000(y_steps);
 		
 		// select x direction
 		if (x_way_um < 0)
@@ -203,30 +212,36 @@ void xy_move (uint16_t x_way_um, uint16_t y_way_um, uint16_t trip_speed)
 			}
 			
 		// Diagonalfahrt berechnen
-		for(uint16_t i = step_counter ; i>0 ; i--)
+		for(uint32_t i = step_counter ; i>0 ; i--)
 		{		
 			if (x_steps != 0)
 			{
 				x_step(trip_speed);
+				if (x_way_um > 0)
+				{sX_IST++;} 
+				else
+				{sX_IST--;}
 				x_steps--;
+				
 			}
 			if (y_steps != 0)
 			{
 				y_step(trip_speed);
+				if (y_way_um > 0)
+				{sY_IST++;} 
+				else
+				{sY_IST--;}
 				y_steps--;
 			}
 		}	
 			
 	}
 
-
-
-void line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t trip_speed)
-	{
-		int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
-		int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
-		int err = dx+dy, e2; /* error value e_xy */
- 
+void line(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint16_t trip_speed){
+		uint32_t dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+		uint32_t dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+		uint32_t err = dx+dy, e2; /* error value e_xy */
+		
 	for(;;)
 		{  /* loop */
 			xy_move((x0),(y0),trip_speed);
@@ -243,62 +258,41 @@ void line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t trip_spee
 	}}
 
 void axis_ref(){
-	// Z Ref
-	
 	// Z heben bis Ref
 while (!(xyz_REF_SW))
 		{
-			z_move(fmm_to_ium(-0.1), speed*6);
+			z_move(fmm_to_ium(-0.1), v_ref);
 		}
-		sZ_IST = 480;
-
 	// Z auf Ref-Pos
-	z_move(fmm_to_ium(5.0), speed*2);
+	z_move(fmm_to_ium(5.0), v_max);
+	sZ_IST = 0;
 
 while (!(xyz_REF_SW))
 		{
-			x_move(fmm_to_ium(-0.1), speed*6);
+			x_move(fmm_to_ium(-0.1), v_ref);
 		}
-//		sX_IST = 0;
 	// X auf Ref-Pos
-	x_move(fmm_to_ium(5.00), speed*2);
+	x_move(fmm_to_ium(5.00), v_max);
+	sX_IST = 0;
 	
 while (!(xyz_REF_SW))
 		{
-			y_move(fmm_to_ium(-0.1), speed*6);
+			y_move(fmm_to_ium(-0.1), v_ref);
 		}
-		sY_IST = 0;
-	// Y aus Ref-Pos
-	y_move(fmm_to_ium(5.00), speed*2);
-	
-	
-	
-	
-	
-	
-	
-	/*
-	while (1)
-	{
-		if ( !(PINA & (1<<PA6)) )
-		{
-			PORTD |= (1<<PD6);
-		}
-		else
-		{
-			PORTD &= ~(1<<PD6);
-		}
-	}
-	*/
-	
-	
+	// Y auf Ref-Pos
+	y_move(fmm_to_ium(5.00), v_max);
+	sY_IST = 0;	
 
-	
-	
-	
-	
+	_delay_ms(100);
 }
 
-void go_cnc(void){
-	
+void go_cnc(void)
+{
+	z_move(fmm_to_ium(38.0),v_1);
+	uart_puts("LINE_MOVE");
+		line(0,0,fmm_to_ium(25.0),fmm_to_ium(40.0),v_1);
+	uart_puts("FINISHED!");	
+		while (1)
+		{
+		}
 }
