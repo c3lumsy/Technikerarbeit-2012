@@ -152,6 +152,9 @@ void main(void)
 	POS_OUT_UART();
 
 #endif
+	while (1)
+	{
+	}
 			
 }
 

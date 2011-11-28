@@ -93,12 +93,16 @@ void x_step (uint16_t trip_speed)
 	}
 void x_move (int32_t way_um, uint16_t trip_speed){
 	// select direction
+	int8_t direction;
 		if (way_um > 0)
-			{x_CCW;} 
+			{x_CCW;
+			direction = 1;
+			} 
 		else
 			{
 			x_CW;
 			way_um = -(way_um);
+			direction = -1;
 			}
 		
 	// way to steps
@@ -107,7 +111,7 @@ void x_move (int32_t way_um, uint16_t trip_speed){
 		for(uint16_t i=0; i<steps; i++)
 		{
 			x_step(trip_speed);
-			if (way_um > 0)
+			if (direction > 0)
 			{sX_IST++;} 
 			else
 			{sX_IST--;}
@@ -122,12 +126,16 @@ void y_step (uint16_t trip_speed)
 	}
 void y_move (int32_t way_um, uint16_t trip_speed){
 	// select direction
+	int8_t direction;
 		if (way_um > 0)
-			{y_CCW;} 
+			{y_CCW;
+			direction = 1;
+			} 
 		else
 			{
 			y_CW;
 			way_um = -(way_um);
+			direction = -1;
 			}
 		
 	// way to steps
@@ -136,7 +144,7 @@ void y_move (int32_t way_um, uint16_t trip_speed){
 		for(uint16_t i=0; i<steps; i++)
 		{
 			y_step(trip_speed);
-			if (way_um > 0)
+			if (direction > 0)
 			{sY_IST++;} 
 			else
 			{sY_IST--;}
@@ -151,12 +159,16 @@ void z_step (uint16_t trip_speed)
 	}
 void z_move (int32_t way_um, uint16_t trip_speed){
 	// select direction
+	int8_t direction;
 		if (way_um > 0)
-			{z_CW;} 
+			{z_CW;
+			direction = 1;
+			} 
 		else
 			{
 			z_CCW;
 			way_um = -(way_um);
+			direction = -1;
 			}
 		
 	// way to steps
@@ -165,41 +177,50 @@ void z_move (int32_t way_um, uint16_t trip_speed){
 		for(uint16_t i=0; i<steps; i++)
 		{
 			z_step(trip_speed);
-			if (way_um > 0)
+			if (direction > 0)
 			{sZ_IST++;} 
 			else
 			{sZ_IST--;}
 		}	
 }
 
-void xy_move (uint32_t x_way_um, uint32_t y_way_um, uint16_t trip_speed)
+void xy_move (int32_t x_way_um, int32_t y_way_um, uint16_t trip_speed)
 	{
 		uint32_t step_counter;
-		uint32_t x_steps = x_way_um * x_way_step;
-		uint32_t y_steps = y_way_um * y_way_step;
-		x_steps = i_round_1000(x_steps);
-		y_steps = i_round_1000(y_steps);
-		
+		int8_t x_direction,y_direction;
+	
 		// select x direction
 		if (x_way_um < 0)
 			{
 				x_CW;
 				// Vorzeichen drehen!
+				x_way_um = -(x_way_um);
+				x_direction = -1;
 			} 
 		else
 			{
 				x_CCW;
+				x_direction = 1;
 			}
 		// select y direction
 		if (y_way_um < 0)
 			{
 				y_CW;
 				// Vorzeichen drehen!
+				y_way_um = -(y_way_um);
+				y_direction = -1;
 			} 
 		else
 			{
 				y_CCW;
+				y_direction = 1;
 			}
+			
+		uint32_t x_steps = x_way_um * x_way_step;
+		uint32_t y_steps = y_way_um * y_way_step;
+		x_steps = i_round_1000(x_steps);
+		y_steps = i_round_1000(y_steps);
+			
 			
 			// Gesamtsteps berechnen!
 			if (x_steps>=y_steps)
@@ -217,7 +238,7 @@ void xy_move (uint32_t x_way_um, uint32_t y_way_um, uint16_t trip_speed)
 			if (x_steps != 0)
 			{
 				x_step(trip_speed);
-				if (x_way_um > 0)
+				if (x_direction > 0)
 				{sX_IST++;} 
 				else
 				{sX_IST--;}
@@ -227,7 +248,7 @@ void xy_move (uint32_t x_way_um, uint32_t y_way_um, uint16_t trip_speed)
 			if (y_steps != 0)
 			{
 				y_step(trip_speed);
-				if (y_way_um > 0)
+				if (y_direction > 0)
 				{sY_IST++;} 
 				else
 				{sY_IST--;}
@@ -237,15 +258,15 @@ void xy_move (uint32_t x_way_um, uint32_t y_way_um, uint16_t trip_speed)
 			
 	}
 
-void line(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint16_t trip_speed){
-		uint32_t dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
-		uint32_t dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
-		uint32_t err = dx+dy, e2; /* error value e_xy */
+void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint16_t trip_speed){
+		int32_t dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+		int32_t dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+		int32_t err = dx+dy, e2; /* error value e_xy */
 		
 	for(;;)
 		{  /* loop */
 			xy_move((x0),(y0),trip_speed);
-			if (x0==x1 && y0==y1) break;
+			if ((x0*100)==x1 && (y0*100)==y1) break;
 			e2 = 2*err;
 			if (e2 > dy)
 			{
@@ -290,9 +311,9 @@ void go_cnc(void)
 {
 	z_move(fmm_to_ium(38.0),v_1);
 	uart_puts("LINE_MOVE");
-		line(0,0,fmm_to_ium(25.0),fmm_to_ium(40.0),v_1);
+//		line(0,0,fmm_to_ium(4.0),fmm_to_ium(4.0),v_1);
+
+	line(0,0,fmm_to_ium(30.0),fmm_to_ium(5.0),v_1);
+	
 	uart_puts("FINISHED!");	
-		while (1)
-		{
-		}
 }
