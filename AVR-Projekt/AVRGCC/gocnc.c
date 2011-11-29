@@ -101,12 +101,11 @@ void x_move (int32_t way_um, uint16_t trip_speed){
 		else
 			{
 			x_CW;
-			way_um = -(way_um);
 			direction = -1;
 			}
 		
 	// way to steps
-		uint32_t steps = way_um * x_way_step;
+		uint32_t steps = labs(way_um) * x_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -134,12 +133,11 @@ void y_move (int32_t way_um, uint16_t trip_speed){
 		else
 			{
 			y_CW;
-			way_um = -(way_um);
 			direction = -1;
 			}
 		
 	// way to steps
-		uint32_t steps = way_um * y_way_step;
+		uint32_t steps = labs(way_um) * y_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -167,12 +165,11 @@ void z_move (int32_t way_um, uint16_t trip_speed){
 		else
 			{
 			z_CCW;
-			way_um = -(way_um);
 			direction = -1;
 			}
 		
 	// way to steps
-		uint32_t steps = way_um * z_way_step;
+		uint32_t steps = labs(way_um) * z_way_step;
 		steps = i_round_1000(steps);
 		for(uint16_t i=0; i<steps; i++)
 		{
@@ -193,8 +190,6 @@ void xy_move (int32_t x_way_um, int32_t y_way_um, uint16_t trip_speed)
 		if (x_way_um < 0)
 			{
 				x_CW;
-				// Vorzeichen drehen!
-				x_way_um = -(x_way_um);
 				x_direction = -1;
 			} 
 		else
@@ -206,8 +201,6 @@ void xy_move (int32_t x_way_um, int32_t y_way_um, uint16_t trip_speed)
 		if (y_way_um < 0)
 			{
 				y_CW;
-				// Vorzeichen drehen!
-				y_way_um = -(y_way_um);
 				y_direction = -1;
 			} 
 		else
@@ -216,8 +209,8 @@ void xy_move (int32_t x_way_um, int32_t y_way_um, uint16_t trip_speed)
 				y_direction = 1;
 			}
 			
-		uint32_t x_steps = x_way_um * x_way_step;
-		uint32_t y_steps = y_way_um * y_way_step;
+		uint32_t x_steps = labs(x_way_um) * x_way_step;
+		uint32_t y_steps = labs(y_way_um) * y_way_step;
 		x_steps = i_round_1000(x_steps);
 		y_steps = i_round_1000(y_steps);
 			
@@ -259,23 +252,17 @@ void xy_move (int32_t x_way_um, int32_t y_way_um, uint16_t trip_speed)
 	}
 
 void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint16_t trip_speed){
-		int32_t dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
-		int32_t dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
-		int32_t err = dx+dy, e2; /* error value e_xy */
+		int32_t dx = labs(x1-x0), sx = x0<x1 ? 1 : -1;
+		int32_t dy = labs(y1-y0), sy = y0<y1 ? 1 : -1;
+		int32_t err = (dx>dy ? dx : -dy)/2, e2;
 		
 	for(;;)
 		{  /* loop */
-			xy_move((x0),(y0),trip_speed);
+		xy_move((x0),(y0),trip_speed);
 			if ((x0*100)==x1 && (y0*100)==y1) break;
-			e2 = 2*err;
-			if (e2 > dy)
-			{
-				err += dy; x0 += sx;
-			}
-		if (e2 < dx)
-			{
-				err += dx; y0 += sy;
-			}
+			e2 = err;
+		    	if (e2 >-dx) { err -= dy; x0 += sx; }    
+		  	if (e2 < dy) { err += dx; y0 += sy; }
 	}}
 
 void axis_ref(){
