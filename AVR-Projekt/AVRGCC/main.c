@@ -40,7 +40,7 @@ const char POS_OUT(int32_t POS)
 {
 unsigned	char out[10];
 	char buffer[3];
-	int32_t x= POS*(x_way_pr/x_step_pr)*10000;
+	int32_t x= POS/*(x_way_pr/x_step_pr)*10000*/;
 	if (x>0)
 	{out[0]='+';} 
 	else
@@ -142,9 +142,8 @@ void main(void)
 	uart1_putc(CMD_CR);
 
 
-	axis_ref();
+//	axis_ref();
 	go_cnc();
-	
 	
 #ifdef PCmode
 	uart_puts("PCmode enable!");
