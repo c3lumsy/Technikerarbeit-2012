@@ -24,7 +24,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #endif
 
 #define PCmode		// HMI over UART
-#define NOdelay		// no delay for AVR Studio Simulation
+//#define NOdelay		// no delay for AVR Studio Simulation
 
 /* define BAUD of UART0 and UART1 */
 #define UART_BAUD_RATE      19200      

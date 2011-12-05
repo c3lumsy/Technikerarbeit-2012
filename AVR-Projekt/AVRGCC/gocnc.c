@@ -29,7 +29,20 @@ Copyright:		(C)2012 Dennis Hohmann
 #define v_1 1000 
 #define v_ref 1000	// ref speed
 		
+void um_to_steps(){
+	
+}		
+		
 void axis_step(int8_t AxisSelect,uint16_t AxisSpeed){
+	if (AXIS[AxisSelect].AxisDirection == 1)
+	{
+		CNC_PORT |= _BV((AxisSelect*2));
+	} 
+	else
+	{
+		CNC_PORT &= ~_BV((AxisSelect*2));
+	}
+	
 	CNC_PORT |= _BV(((AxisSelect*2)+1));
 	#ifndef NOdelay
 	_delay_us(AxisSpeed/2);
@@ -46,12 +59,10 @@ void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
 	if (AxisGoto > 0)
 		{	
 			AXIS[AxisSelect].AxisDirection = 1;
-			CNC_PORT |= _BV((AxisSelect*2));
 		} 
 	else
 		{
-			AXIS[AxisSelect].AxisDirection = -1;
-			CNC_PORT &= ~_BV((AxisSelect*2));
+			AXIS[AxisSelect].AxisDirection = (-1);
 		}
 	AxisGoto = abs(AxisGoto);
 	for (uint16_t i=0; i<AxisGoto; i++)
@@ -60,32 +71,24 @@ void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
 		}
 }
 
-void um_to_steps(){
-	
-}
-
 void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 	uint16_t step_counter;
-	
+	int8_t xAxisDir,yAxisDir;
 	if (xAxisGoto > 0)
 		{	
-			AXIS[xAxis].AxisDirection = 1;
-			CNC_PORT |= _BV((xAxis*2));
+			xAxisDir = 1;
 		} 
 	else
 		{
-			AXIS[xAxis].AxisDirection = -1;
-			CNC_PORT &= ~_BV((xAxis*2));
+			xAxisDir = (-1);
 		}
 	if (yAxisGoto > 0)
 		{	
-			AXIS[yAxis].AxisDirection = 1;
-			CNC_PORT |= _BV((yAxis*2));
+			yAxisDir = 1;
 		} 
 	else
 		{
-			AXIS[yAxis].AxisDirection = -1;
-			CNC_PORT &= ~_BV((yAxis*2));
+			yAxisDir = (-1);
 		}
 		
 	xAxisGoto = abs(xAxisGoto);
@@ -104,12 +107,12 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 		{		
 			if (xAxisGoto != 0)
 				{
-					axis_move(xAxis,1,v_1);
+					axis_move(xAxis,xAxisDir,v_1);
 					--xAxisGoto;
 				}
 			if (yAxisGoto != 0)
 				{
-					axis_move(yAxis,1,v_1);
+					axis_move(yAxis,yAxisDir,v_1);
 					--yAxisGoto;
 				}
 		}
@@ -119,16 +122,18 @@ void axis_move_interpol(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t
 	int16_t dx = abs(x1-x0),x2=0, sx = x0<x1 ? 1 : -1;
 	int16_t dy = abs(y1-y0),y2=0, sy = y0<y1 ? 1 : -1;
 	int16_t err = (dx>dy ? dx : -dy)/2, e2;
-		
+	
 	for(;;)
-		{  /* loop */
-			axis_move_parallel(((x0-x2)*10),((y0-y2)*10),AxisSpeed);
-			if (x0==x1 && y0==y1) break;
+		{ 
+			axis_move_parallel((x0-x2),(y0-y2),AxisSpeed);
+			if (x0==x1 && y0==y1) 
+				break;
 			x2 = x0; y2 = y0;
 			e2 = err;
-		    	if (e2 >-dx) { err -= dy; x0 += sx; }    
+		    if (e2 >-dx) { err -= dy; x0 += sx; }    
 		  	if (e2 < dy) { err += dx; y0 += sy; }
-		}}
+		}	
+}
 
 void axis_ref(){
 // Define AxisMaxPos
@@ -161,7 +166,7 @@ while (!(xyz_REF_SW))
 	
 // Ref Y Axis
 while (!(xyz_REF_SW))
-		{
+		{	
 			axis_move(yAxis,-1,v_ref);
 		}
 	axis_move(yAxis,96,v_ref);
@@ -171,10 +176,13 @@ while (!(xyz_REF_SW))
 	_delay_ms(1000);
 }
 
-void go_cnc(void)
-{
 
-	axis_move_parallel(960,4800,v_1);
+void go_cnc(void)
+{	
+	axis_move_interpol(0,0,960,480,v_1);
+	_delay_ms(1000);
+	axis_move_interpol(0,0,-960,480,v_1);
+
 	
 	uart_puts("FINISHED!");	
 }

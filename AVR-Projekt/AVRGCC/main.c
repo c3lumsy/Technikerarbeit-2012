@@ -141,8 +141,12 @@ void main(void)
 	uart_putc(CMD_LF);
 	uart1_putc(CMD_CR);
 
+#ifndef NOdelay
+	axis_ref();
+#endif
 
-//	axis_ref();
+	
+	
 	go_cnc();
 	
 #ifdef PCmode
