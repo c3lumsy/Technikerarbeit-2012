@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# AvrStudio Solution File, Format Version 11.00
+Project("{D1100916-62DA-4D80-A9B4-55A1E7CCEEB3}") = "CNC_Control", "CNC_Control.avrgccproj", "{079D37AA-9A3E-4373-8914-6F62729EC644}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{079D37AA-9A3E-4373-8914-6F62729EC644}.Debug|AVR.ActiveCfg = Debug|AVR
+		{079D37AA-9A3E-4373-8914-6F62729EC644}.Debug|AVR.Build.0 = Debug|AVR
+		{079D37AA-9A3E-4373-8914-6F62729EC644}.Release|AVR.ActiveCfg = Release|AVR
+		{079D37AA-9A3E-4373-8914-6F62729EC644}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -42,7 +42,6 @@ LICENSE:
 #include <avr/pgmspace.h>
 #include "uart.h"
 
-
 /*
  *  constants and macros
  */
@@ -255,8 +254,6 @@ static volatile unsigned char UART1_RxTail;
 static volatile unsigned char UART1_LastRxError;
 #endif
 
-
-
 SIGNAL(UART0_RECEIVE_INTERRUPT)
 /*************************************************************************
 Function: UART Receive Complete interrupt
@@ -296,8 +293,8 @@ Purpose:  called when the UART has received a character
         /* store received data in buffer */
         UART_RxBuf[tmphead] = data;
     }
-    UART_LastRxError = lastRxError; 
-		UART0_RX_INT();  
+    UART_LastRxError = lastRxError;  
+	UART0_RX_INT();
 }
 
 
@@ -432,8 +429,7 @@ unsigned int uart_getc(void)
 {    
     unsigned char tmptail;
     unsigned char data;
-
-
+	
     if ( UART_RxHead == UART_RxTail ) {
         return UART_NO_DATA;   /* no data available */
     }
@@ -528,7 +524,7 @@ Purpose:  called when the UART1 has received a character
     /* read UART status register and UART data register */ 
     usr  = UART1_STATUS;
     data = UART1_DATA;
-    
+	  
     /* */
     lastRxError = (usr & (_BV(FE1)|_BV(DOR1)) );
         
@@ -545,7 +541,7 @@ Purpose:  called when the UART1 has received a character
         UART1_RxBuf[tmphead] = data;
     }
     UART1_LastRxError = lastRxError; 
-	UART1_RX_INT();  
+	UART1_RX_INT();
 }
 
 
@@ -624,7 +620,7 @@ unsigned int uart1_getc(void)
     
     /* calculate /store buffer index */
     tmptail = (UART1_RxTail + 1) & UART_RX_BUFFER_MASK;
-    UART1_RxTail = tmptail; 
+    UART1_RxTail = tmptail;
     
     /* get data from receive buffer */
     data = UART1_RxBuf[tmptail];
@@ -633,6 +629,37 @@ unsigned int uart1_getc(void)
 
 }/* uart1_getc */
 
+
+/*************************************************************************
+Function: uart_gets()
+Purpose:  receive string from UART
+Input:    pointer to chararray, char maximum char width, line end symbol
+Returns:  none          
+**************************************************************************/
+void uart1_gets(char* BUFFER, char separator)
+{
+	uint8_t NextChar;
+	uint8_t counter = 0;
+ 
+	NextChar = uart1_getc();						// Warte auf und empfange das nächste Zeichen
+	NextChar = (unsigned char)NextChar;				// Sammle solange Zeichen, bis:
+	while (NextChar != separator && NextChar != NULL)	// * entweder das String Ende Zeichen kam
+	{												// * oder das aufnehmende Array voll ist		
+		while (NextChar != separator && NextChar != NULL)
+		{
+			BUFFER[counter++] = NextChar;
+			NextChar = uart1_getc();
+			NextChar = (unsigned char)NextChar;
+			while (NextChar == NULL)
+				{
+					NextChar = uart1_getc();
+					NextChar = (unsigned char)NextChar;
+				}
+		}
+		BUFFER[counter++] = separator;					// CMD_CR wieder anhängen!
+		BUFFER[counter++] = '\0';					// C-Standart-String-Terminierung
+	}
+}
 
 /*************************************************************************
 Function: uart1_putc()

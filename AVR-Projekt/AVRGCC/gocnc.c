@@ -15,25 +15,37 @@ Author:			Dennis Hohmann
 Email:			hohmannd@web.de
 Copyright:		(C)2012 Dennis Hohmann
 ************************************************************************/ 
-
+#include "globdef.h"
 #include <stdlib.h>
 #include <avr/io.h>
-#include <avr/signal.h>
-#include <avr/delay.h>
-#include <inttypes.h>
-#include <math.h>
-#include "uart.h"
-#include "globdef.h"
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include "gocnc.h"
 
-#define v_max 700	// max speed 15mm/s
-#define v_1 1000 
-#define v_ref 1000	// ref speed
-		
-void um_to_steps(){
+#define xAxis 0
+#define yAxis 1
+#define zAxis 2
+
+#define X AXIS[xAxis]
+#define Y AXIS[yAxis]
+#define Z AXIS[zAxis]
 	
-}		
-		
+int16_t um_to_steps(int32_t umGoTo)
+{
+	umGoTo*=(int16_t)xyz_step_mm;
+	umGoTo/=1000;
+	return umGoTo;
+}
+
+int32_t steps_to_um(int32_t steps)
+{
+	steps*=1000;
+	steps/=(int32_t)xyz_step_mm;
+	return steps;		
+}	
+	
 void axis_step(int8_t AxisSelect,uint16_t AxisSpeed){
+
 	if (AXIS[AxisSelect].AxisDirection == 1)
 	{
 		CNC_PORT |= _BV((AxisSelect*2));
@@ -45,14 +57,14 @@ void axis_step(int8_t AxisSelect,uint16_t AxisSpeed){
 	
 	CNC_PORT |= _BV(((AxisSelect*2)+1));
 	#ifndef NOdelay
-	_delay_us(AxisSpeed/2);
+	_delay_us(1000/*AxisSpeed/2*/);
 	#endif
 	CNC_PORT &= ~_BV(((AxisSelect*2)+1));
 	#ifndef NOdelay
-	_delay_us(AxisSpeed);
+	_delay_us(1000/*AxisSpeed*/);
 	#endif
-	AXIS[AxisSelect].AxisAbsPos += AXIS[AxisSelect].AxisDirection;
-	AXIS[AxisSelect].AxisRelPos += AXIS[AxisSelect].AxisDirection;
+	AXIS[AxisSelect].AxisAbsPos += (int8_t)AXIS[AxisSelect].AxisDirection;
+	AXIS[AxisSelect].AxisRelPos += (int8_t)AXIS[AxisSelect].AxisDirection;
 }
 void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
 {
@@ -62,7 +74,7 @@ void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
 		} 
 	else
 		{
-			AXIS[AxisSelect].AxisDirection = (-1);
+			AXIS[AxisSelect].AxisDirection = -1;
 		}
 	AxisGoto = abs(AxisGoto);
 	for (uint16_t i=0; i<AxisGoto; i++)
@@ -70,7 +82,6 @@ void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
 			axis_step(AxisSelect,AxisSpeed);
 		}
 }
-
 void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 	uint16_t step_counter;
 	int8_t xAxisDir,yAxisDir;
@@ -80,7 +91,7 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 		} 
 	else
 		{
-			xAxisDir = (-1);
+			xAxisDir = -1;
 		}
 	if (yAxisGoto > 0)
 		{	
@@ -88,7 +99,7 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 		} 
 	else
 		{
-			yAxisDir = (-1);
+			yAxisDir = -1;
 		}
 		
 	xAxisGoto = abs(xAxisGoto);
@@ -117,23 +128,23 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 				}
 		}
 }
-
-void axis_move_interpol(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t AxisSpeed){
-	int16_t dx = abs(x1-x0),x2=0, sx = x0<x1 ? 1 : -1;
-	int16_t dy = abs(y1-y0),y2=0, sy = y0<y1 ? 1 : -1;
+void axis_move_interpol(int16_t x0, int16_t y0, int16_t xAxisGoto, int16_t yAxisGoto, uint16_t AxisSpeed){
+	int16_t dx = abs(xAxisGoto-x0), sx = x0<xAxisGoto ? 1 : -1;
+	int16_t dy = abs(yAxisGoto-y0), sy = y0<yAxisGoto ? 1 : -1;
 	int16_t err = (dx>dy ? dx : -dy)/2, e2;
 	
 	for(;;)
 		{ 
-			axis_move_parallel((x0-x2),(y0-y2),AxisSpeed);
-			if (x0==x1 && y0==y1) 
+			axis_move_parallel((x0-AXIS[xAxis].AxisRelPos),(y0-AXIS[yAxis].AxisRelPos),AxisSpeed);
+			if (x0==xAxisGoto && y0==yAxisGoto) 
 				break;
-			x2 = x0; y2 = y0;
 			e2 = err;
 		    if (e2 >-dx) { err -= dy; x0 += sx; }    
 		  	if (e2 < dy) { err += dx; y0 += sy; }
 		}	
 }
+
+
 
 void axis_ref(){
 // Define AxisMaxPos
@@ -176,13 +187,14 @@ while (!(xyz_REF_SW))
 	_delay_ms(1000);
 }
 
-
 void go_cnc(void)
 {	
-	axis_move_interpol(0,0,960,480,v_1);
-	_delay_ms(1000);
-	axis_move_interpol(0,0,-960,480,v_1);
-
-	
-	uart_puts("FINISHED!");	
+	int16_t x = X.AxisAbsPos;
+ 	axis_move_parallel(steps_to_um(22517),25,v_1);
+	x = X.AxisAbsPos;
+	axis_move_interpol(0,0,-30,-30,v_1);
+	x = X.AxisAbsPos;
+//  	axis_move(zAxis,-3948,v_1);
+//  	_delay_ms(1000);
+//	axis_move_circle(AXIS[xAxis].AxisRelPos,AXIS[yAxis].AxisRelPos,10,0,v_1);
 }

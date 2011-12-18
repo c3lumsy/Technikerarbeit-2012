@@ -3,7 +3,7 @@
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>5.0</ProjectVersion>
-    <ProjectGuid>{6976f06f-84e8-48ab-92d2-2e5671f89be0}</ProjectGuid>
+    <ProjectGuid>{079d37aa-9a3e-4373-8914-6f62729ec644}</ProjectGuid>
     <avrdevice>ATmega1284P</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputType>Executable</OutputType>
@@ -24,15 +24,15 @@
     <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
     <avrtoolinterface>ISP</avrtoolinterface>
     <com_atmel_avrdbg_tool_ispmk2>
-      <ToolType>com.atmel.avrdbg.tool.ispmk2</ToolType>
-      <ToolName>AVRISP mkII</ToolName>
-      <ToolNumber>000200078556</ToolNumber>
-      <Channel>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.ispmk2</ToolType>
+      <ToolName xmlns="">AVRISP mkII</ToolName>
+      <ToolNumber xmlns="">000200078556</ToolNumber>
+      <Channel xmlns="">
         <host>127.0.0.1</host>
-        <port>1043</port>
+        <port>1045</port>
         <ssl>False</ssl>
       </Channel>
-      <ToolOptions>
+      <ToolOptions xmlns="">
         <InterfaceName>ISP</InterfaceName>
         <InterfaceProperties>
           <JtagDbgClock>1000000</JtagDbgClock>
@@ -47,27 +47,13 @@
         </InterfaceProperties>
       </ToolOptions>
     </com_atmel_avrdbg_tool_ispmk2>
-    <com_atmel_avrdbg_tool_simulator>
-      <ToolType>com.atmel.avrdbg.tool.simulator</ToolType>
-      <ToolName>AVR Simulator</ToolName>
-      <ToolNumber>
-      </ToolNumber>
-      <Channel>
-        <host>127.0.0.1</host>
-        <port>1043</port>
-        <ssl>False</ssl>
-      </Channel>
-    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
         <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
         <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>None</avrgcc.compiler.optimization.DebugLevel>
         <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
       </AvrGcc>
     </ToolchainSettings>
@@ -81,8 +67,6 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
         <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
         <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
@@ -91,11 +75,6 @@
       </AvrGcc>
     </ToolchainSettings>
     <MemorySettings>
-      <MemorySegments>
-        <InitialStack IsEnabled="0">
-          <Address>0x4000</Address>
-        </InitialStack>
-      </MemorySegments>
     </MemorySettings>
     <GenerateHexFile>True</GenerateHexFile>
     <GenerateMapFile>True</GenerateMapFile>
@@ -103,6 +82,12 @@
     <GenerateEepFile>True</GenerateEepFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="eDIP240.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="eDIP240.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="globdef.h">
       <SubType>compile</SubType>
     </Compile>
@@ -122,6 +107,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="vnc1l.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="vnc1l.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

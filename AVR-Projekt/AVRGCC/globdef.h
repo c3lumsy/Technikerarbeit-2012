@@ -23,6 +23,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #define F_CPU 20000000UL
 #endif
 
+/* define DEBUG */
 #define PCmode		// HMI over UART
 //#define NOdelay		// no delay for AVR Studio Simulation
 
@@ -31,37 +32,27 @@ Copyright:		(C)2012 Dennis Hohmann
 #define UART1_BAUD_RATE     9600
 
 /* define I/O */
-#define _DISABLE,_OFF,_FALSE	0
-#define	_ENABLE,_ON		1
-#define _TRUE !=0
+#define _DISABLE	0
+#define _OFF		0 
+#define _FALSE		0
+#define	_ENABLE		1
+#define _ON			1
+#define _TRUE		!=0
 
 /* define AXIS */
 #define CNC_PORT PORTA				// Port to goCNC UNI1500
 #define xyz_REF_SW (PINA & _BV(6))	// xyz-axis ref-switch
 
-#define x_step_mm 96	// x-axis steps per mm
-#define y_step_mm 96	// y-axis steps per mm
-#define z_step_mm 96	// z-axis steps per mm
+/* define USB State */
+typedef struct _structmachinestate{
+	unsigned char USB_CON:1;			// USB connected
+	unsigned char USB_FILE_OPEN:1;		// USB File open
+	unsigned int USB_SEK:16;	// SEK Counter from FILE
+	unsigned char PROG_SEL:8;			// Programm-Select		
+	unsigned int Last_GCODE:16;			// Number of the last gcode command
+}structmachinestate;
+volatile structmachinestate MSTATE[1];
 
-int32_t sX_IST, sY_IST, sZ_IST;
 
-typedef struct {
-	uint8_t AxisStateRef:1;		// Achse referiert ?
-	uint8_t	AxisStateRdy:1;		// Achse bereit? keine bewegung!
-	uint16_t AxisAbsPos:15;		// Achse Absolut Position in Steps
-	uint16_t AxisMaxPos:15;		// SoftEnd 300mm/19200 max!
-	int16_t AxisRelPos:16;		// Achse relative Position in Steps
-	int16_t AxisGoTo:16;		// Achse wo hin??
-	int8_t AxisDirection:8;		// Richtung der Achse.		
-}structaxis;
-
-#define xAxis 0
-#define yAxis 1
-#define zAxis 2
-
-structaxis AXIS[2];
-#define X AXIS[xAxis]
-#define Y AXIS[yAxis]
-#define Z AXIS[zAxis]
 
 #endif /* GLOBDEF_H_ */
