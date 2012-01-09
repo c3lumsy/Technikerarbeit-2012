@@ -88,6 +88,12 @@
     <Compile Include="eDIP240.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="gcode.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="gcode.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="globdef.h">
       <SubType>compile</SubType>
     </Compile>
@@ -97,7 +103,16 @@
     <Compile Include="gocnc.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2cmaster.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="test_i2cmaster.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="twimaster.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart.c">

@@ -24,7 +24,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #endif
 
 /* define DEBUG */
-#define PCmode		// HMI over UART
+#define PCmode			// HMI over UART
 //#define NOdelay		// no delay for AVR Studio Simulation
 
 /* define BAUD of UART0 and UART1 */
@@ -43,13 +43,28 @@ Copyright:		(C)2012 Dennis Hohmann
 #define CNC_PORT PORTA				// Port to goCNC UNI1500
 #define xyz_REF_SW (PINA & _BV(6))	// xyz-axis ref-switch
 
-/* define USB State */
+#define xAxis 0
+#define yAxis 1
+#define zAxis 2
+
+#define X AXIS[xAxis]
+#define Y AXIS[yAxis]
+#define Z AXIS[zAxis]
+
+
+/* define Maschine State */
 typedef struct _structmachinestate{
 	unsigned char USB_CON:1;			// USB connected
+	unsigned char USB_RDY:1;			// USB Ready
 	unsigned char USB_FILE_OPEN:1;		// USB File open
-	unsigned int USB_SEK:16;	// SEK Counter from FILE
+	unsigned int USB_SEK:16;			// SEK Counter from FILE
 	unsigned char PROG_SEL:8;			// Programm-Select		
 	unsigned int Last_GCODE:16;			// Number of the last gcode command
+	unsigned char USB_FILE_EOF:1;		// EndOfFile
+	unsigned char GCODE_MM:1;			// Maschineneinheit inch=0/mm=1; 
+
+
+
 }structmachinestate;
 volatile structmachinestate MSTATE[1];
 

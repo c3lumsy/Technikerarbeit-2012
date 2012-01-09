@@ -454,6 +454,7 @@ Returns:  none
 **************************************************************************/
 void uart_putc(unsigned char data)
 {
+#ifdef PCmode
     unsigned char tmphead;
 
     
@@ -468,7 +469,7 @@ void uart_putc(unsigned char data)
 
     /* enable UDRE interrupt */
     UART0_CONTROL    |= _BV(UART0_UDRIE);
-
+#endif
 }/* uart_putc */
 
 
@@ -480,9 +481,12 @@ Returns:  none
 **************************************************************************/
 void uart_puts(const char *s )
 {
+#ifdef PCmode
+
     while (*s) 
       uart_putc(*s++);
 
+#endif
 }/* uart_puts */
 
 
@@ -640,11 +644,12 @@ void uart1_gets(char* BUFFER, char separator)
 {
 	uint8_t NextChar;
 	uint8_t counter = 0;
- 
-	NextChar = uart1_getc();						// Warte auf und empfange das nächste Zeichen
-	NextChar = (unsigned char)NextChar;				// Sammle solange Zeichen, bis:
-	while (NextChar != separator && NextChar != NULL)	// * entweder das String Ende Zeichen kam
-	{												// * oder das aufnehmende Array voll ist		
+
+	BUFFER[0]='\0';											// BUFFER leeren!
+	NextChar = uart1_getc();								// Warte auf und empfange das nächste Zeichen
+	NextChar = (unsigned char)NextChar;						// Sammle solange Zeichen, bis:
+	while (NextChar != separator && NextChar != NULL)		// das String Ende Zeichen kam
+	{													
 		while (NextChar != separator && NextChar != NULL)
 		{
 			BUFFER[counter++] = NextChar;
@@ -656,8 +661,8 @@ void uart1_gets(char* BUFFER, char separator)
 					NextChar = (unsigned char)NextChar;
 				}
 		}
-		BUFFER[counter++] = separator;					// CMD_CR wieder anhängen!
-		BUFFER[counter++] = '\0';					// C-Standart-String-Terminierung
+		BUFFER[counter++] = separator;						// CMD_CR wieder anhängen!
+		BUFFER[counter++] = '\0';							// C-Standart-String-Terminierung
 	}
 }
 

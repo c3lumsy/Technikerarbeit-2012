@@ -21,18 +21,10 @@ Copyright:		(C)2012 Dennis Hohmann
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "gocnc.h"
-
-#define xAxis 0
-#define yAxis 1
-#define zAxis 2
-
-#define X AXIS[xAxis]
-#define Y AXIS[yAxis]
-#define Z AXIS[zAxis]
 	
-int16_t um_to_steps(int32_t umGoTo)
+int32_t um_to_steps(int32_t umGoTo)
 {
-	umGoTo*=(int16_t)xyz_step_mm;
+	umGoTo*=(int32_t)xyz_step_mm;
 	umGoTo/=1000;
 	return umGoTo;
 }
@@ -57,34 +49,53 @@ void axis_step(int8_t AxisSelect,uint16_t AxisSpeed){
 	
 	CNC_PORT |= _BV(((AxisSelect*2)+1));
 	#ifndef NOdelay
-	_delay_us(1000/*AxisSpeed/2*/);
+	_delay_us(AxisSpeed/5);
 	#endif
 	CNC_PORT &= ~_BV(((AxisSelect*2)+1));
 	#ifndef NOdelay
-	_delay_us(1000/*AxisSpeed*/);
+	_delay_us(AxisSpeed);
 	#endif
 	AXIS[AxisSelect].AxisAbsPos += (int8_t)AXIS[AxisSelect].AxisDirection;
 	AXIS[AxisSelect].AxisRelPos += (int8_t)AXIS[AxisSelect].AxisDirection;
 }
 void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed)
-{
+{	
 	if (AxisGoto > 0)
-		{	
+		{
 			AXIS[AxisSelect].AxisDirection = 1;
-		} 
+		}
 	else
 		{
 			AXIS[AxisSelect].AxisDirection = -1;
 		}
+	
 	AxisGoto = abs(AxisGoto);
 	for (uint16_t i=0; i<AxisGoto; i++)
 		{
 			axis_step(AxisSelect,AxisSpeed);
 		}
 }
-void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
+void axis_move_single(int8_t AxisSelect,int32_t AxisGoto,uint16_t AxisSpeed)
+{
+	AxisGoto = um_to_steps(AxisGoto);
+	AxisGoto -= AXIS[AxisSelect].AxisRelPos;
+	axis_move(AxisSelect,AxisGoto,AxisSpeed);
+}
+void axis_move_parallel(int32_t xAxisGoto,int32_t yAxisGoto,uint16_t AxisSpeed){
 	uint16_t step_counter;
 	int8_t xAxisDir,yAxisDir;
+	
+// 	xAxisGoto = um_to_steps(xAxisGoto);
+// 	yAxisGoto = um_to_steps(yAxisGoto);
+// 
+// 	xAxisGoto -= AXIS[xAxis].AxisRelPos;
+// 	yAxisGoto -= AXIS[yAxis].AxisRelPos;
+// 	char temp[8];
+// 	uart_puts(" ");
+// 	uart_puts(ltoa(xAxisGoto,temp,10));
+// 	uart_puts(" / ");
+// 	uart_puts(ltoa(yAxisGoto,temp,10));
+// 	
 	if (xAxisGoto > 0)
 		{	
 			xAxisDir = 1;
@@ -102,8 +113,8 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 			yAxisDir = -1;
 		}
 		
-	xAxisGoto = abs(xAxisGoto);
-	yAxisGoto = abs(yAxisGoto);
+	xAxisGoto = labs(xAxisGoto);
+	yAxisGoto = labs(yAxisGoto);
 	
 	if (xAxisGoto>=yAxisGoto)
 		{
@@ -118,24 +129,30 @@ void axis_move_parallel(int16_t xAxisGoto,int16_t yAxisGoto,uint16_t AxisSpeed){
 		{		
 			if (xAxisGoto != 0)
 				{
-					axis_move(xAxis,xAxisDir,v_1);
+					axis_move(xAxis,xAxisDir,AxisSpeed);
 					--xAxisGoto;
 				}
 			if (yAxisGoto != 0)
 				{
-					axis_move(yAxis,yAxisDir,v_1);
+					axis_move(yAxis,yAxisDir,AxisSpeed);
 					--yAxisGoto;
 				}
 		}
 }
-void axis_move_interpol(int16_t x0, int16_t y0, int16_t xAxisGoto, int16_t yAxisGoto, uint16_t AxisSpeed){
-	int16_t dx = abs(xAxisGoto-x0), sx = x0<xAxisGoto ? 1 : -1;
-	int16_t dy = abs(yAxisGoto-y0), sy = y0<yAxisGoto ? 1 : -1;
+void axis_move_interpol(int16_t x0, int16_t y0, int32_t xAxisGoto, int32_t yAxisGoto, uint16_t AxisSpeed)
+{
+ 	xAxisGoto = um_to_steps(xAxisGoto);
+ 	yAxisGoto = um_to_steps(yAxisGoto);
+ 	x0 = AXIS[xAxis].AxisRelPos;
+	y0 = AXIS[yAxis].AxisRelPos;
+	
+	int32_t dx = labs(xAxisGoto-x0), sx = x0<xAxisGoto ? 1 : -1;
+	int32_t dy = labs(yAxisGoto-y0), sy = y0<yAxisGoto ? 1 : -1;
 	int16_t err = (dx>dy ? dx : -dy)/2, e2;
 	
 	for(;;)
 		{ 
-			axis_move_parallel((x0-AXIS[xAxis].AxisRelPos),(y0-AXIS[yAxis].AxisRelPos),AxisSpeed);
+			axis_move_parallel((x0-AXIS[xAxis].AxisRelPos),(y0-AXIS[yAxis].AxisRelPos),AxisSpeed/2);
 			if (x0==xAxisGoto && y0==yAxisGoto) 
 				break;
 			e2 = err;
@@ -143,8 +160,6 @@ void axis_move_interpol(int16_t x0, int16_t y0, int16_t xAxisGoto, int16_t yAxis
 		  	if (e2 < dy) { err += dx; y0 += sy; }
 		}	
 }
-
-
 
 void axis_ref(){
 // Define AxisMaxPos
@@ -160,7 +175,7 @@ while (!(xyz_REF_SW))
 		{
 			axis_move(zAxis,1,v_ref);
 		}
-	axis_move(zAxis,-96,v_ref);
+	axis_move(zAxis,-4000,v_ref);
 	Z.AxisAbsPos = 0;
 	Z.AxisStateRef = 1;
 	// Z @RefPos
@@ -170,7 +185,7 @@ while (!(xyz_REF_SW))
 		{
 			axis_move(xAxis,-1,v_ref);
 		}
-	axis_move(xAxis,96,v_ref);
+	axis_move(xAxis,9600,v_ref);
 	X.AxisAbsPos = 0;
 	X.AxisStateRef = 1;
 	// X @RefPos
@@ -180,7 +195,7 @@ while (!(xyz_REF_SW))
 		{	
 			axis_move(yAxis,-1,v_ref);
 		}
-	axis_move(yAxis,96,v_ref);
+	axis_move(yAxis,9600,v_ref);
 	Y.AxisAbsPos = 0;
 	Y.AxisStateRef = 1;
 	// X @RefPos
@@ -189,12 +204,5 @@ while (!(xyz_REF_SW))
 
 void go_cnc(void)
 {	
-	int16_t x = X.AxisAbsPos;
- 	axis_move_parallel(steps_to_um(22517),25,v_1);
-	x = X.AxisAbsPos;
-	axis_move_interpol(0,0,-30,-30,v_1);
-	x = X.AxisAbsPos;
-//  	axis_move(zAxis,-3948,v_1);
-//  	_delay_ms(1000);
-//	axis_move_circle(AXIS[xAxis].AxisRelPos,AXIS[yAxis].AxisRelPos,10,0,v_1);
+
 }
