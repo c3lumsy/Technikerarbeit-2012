@@ -1,0 +1,7 @@
+PATH: <BITMAPS\>
+
+BmpStart = 0
+
+
+
+Picture:  BmpStart	<Start.BMP>

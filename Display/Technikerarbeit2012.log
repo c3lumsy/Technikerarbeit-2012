@@ -1,0 +1,36 @@
+Makro-Compiler V3.0 (01.02.2011) for
+EA eDIP128-6, EA eDIP160-7 and EA eDIP240-7
+
+Open File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.kmc>
+Open File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\fonts.kmi>
+Import Font-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\4x6.FXT>
+            size: 4x6 dots, used codes: 32..158, 1021 bytes
+Import Font-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\GENEVA10.FXT>
+            height: 10 dots, used codes: 32..248, 2017 bytes
+Import Font-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\GENEVA12.FXT>
+            height: 12 dots, used codes: 32..216, 2875 bytes
+Import Font-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\CHICAG14.FXT>
+            height: 14 dots, used codes: 32..248, 2739 bytes
+Import Font-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\BIGZIF57.FXT>
+            height: 57 dots, used codes: 43..58, 3598 bytes
+Open File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\bilder.kmi>
+Import Picture-File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\BITMAPS\Start.BMP>
+
+Write EEPROM Upload File \\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
+
+EEPROM Memory overview:
+     System:       3650 bytes
+   5 Fonts:       12250 bytes
+   1 Pictures:     3842 bytes
+   3 Macros:         64 bytes
+   1 Touchmacros:   116 bytes
+   0 Menumacros:      0 bytes
+ ----------------------------
+          sumary: 19922 bytes
+
+connecting eDIP240-7 on "EA 9777-USB eDIP Programmer (COM3)"
+.
+found: eDIP240-7 240x128, monochrome, Smallprotokoll, 32kB EEPROM, 115200 baud
+program file \\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP with 115200 baud (Smallprotokoll)
+Ok
+Ready: eDIP is programed,  19922 bytes used, 12846 bytes free

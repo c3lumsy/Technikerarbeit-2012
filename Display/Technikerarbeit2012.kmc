@@ -1,0 +1,72 @@
+eDIP240-7 "CNC-Controller"	; define eDIP240-7, "Projectname" max. 30 character
+
+;SIMULATION			; start simulation
+
+;COM1: 115200			; program eDIP on COMx with 115200 Baud
+USB: "eDIP Programmer"	; use EA 9777-1USB eDIP Programmer (only Windows 2000/XP) 
+				; using USB under WIN98/ME search for COM port (Control Panel/Gerätemanager)
+
+;VERIFY			; verify after program
+
+;=============================================================================
+; Includes
+
+include <fonts.kmi>
+include <bilder.kmi>
+
+;=============================================================================
+; Makro Nummern
+
+MnPowerOn 	= 0
+TmStartMenu	= 1
+TmHauptMenu	= 2
+ReturnMakro	= 255
+
+;=============================================================================
+; Macros
+
+PowerOnMakro:			; wird nach dem Einschalten ausgeführt
+	#MN MnPowerOn 
+	
+ResetMakro:			; wird nach einem externen Reset ausgeführt
+	#MN MnPowerOn 
+	
+WatchdogMakro:		; wird nach einem Fehlerfall/Timeout >500ms ausgeführt
+	#MN MnPowerOn 
+
+BrownOutMakro:		; wird nach einem Spannungseinbruch <4V ausgeführt
+	#MN MnPowerOn
+
+;=============================================================================
+
+Macro: MnPowerOn		; Power-On/Reset Makro
+	#TA			; Terminal aus
+	#AQ 0			; Bargraph automatisch senden aus
+	#MN TmStartMenu	; Hauptmenu anzeigen
+
+Macro: ReturnMakro
+	#MT TmHauptMenu
+
+Macro: TmStartMenu
+	#DL
+	#UV 4
+#YH 75
+	#UI 0,0,BmpStart
+	#AL 0,0
+	#AE 13
+	#AF GENEVA10
+	#AT 169,112,239,127, TmHauptMenu,0, "Hauptmenu"
+
+TouchMacro: TmHauptMenu
+	x=20
+	#DL
+	#AL 0,0
+	#UV 4
+	#AE 13
+	#AF GENEVA12
+
+	#AT 70, 0+x,170,15+x,'0',0, "CAuto"		;
+	#AT 70,17+x,170,32+x,'1',0, "CHand"		;
+	#AT 70,34+x,170,49+x, 0,0, "CReferenzfahrt"	;
+	#AT 70,51+x,170,66+x, 0,0, "CEinstellungen"	;
+	#AT 169,112,239,127, 0,0, "CVersion"		;

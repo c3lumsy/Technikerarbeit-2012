@@ -43,7 +43,7 @@ void gcode_cmd()
 				uart_puts("Z:");
 		#endif	
 			i =	usb_get_value();
-			axis_move_single(zAxis,i,v_max);
+			axis_move_single(zAxis,i,v_1);
 			}
 		if (STRING[0] == 'X')
 			{	// X-Pos auslesen!
@@ -58,7 +58,7 @@ void gcode_cmd()
 					{	// Y-Pos auslesen!
 						j =	usb_get_value();
 					}
-				axis_move_interpol(0,0,i,j,v_max);
+				axis_move_interpol(0,0,i,j,v_1);
 			}
 	}
 }

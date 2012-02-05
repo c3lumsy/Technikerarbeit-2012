@@ -175,7 +175,7 @@ while (!(xyz_REF_SW))
 		{
 			axis_move(zAxis,1,v_ref);
 		}
-	axis_move(zAxis,-4000,v_ref);
+	axis_move(zAxis,-4000,v_max);
 	Z.AxisAbsPos = 0;
 	Z.AxisStateRef = 1;
 	// Z @RefPos
@@ -185,7 +185,7 @@ while (!(xyz_REF_SW))
 		{
 			axis_move(xAxis,-1,v_ref);
 		}
-	axis_move(xAxis,9600,v_ref);
+	axis_move(xAxis,9600,v_max);
 	X.AxisAbsPos = 0;
 	X.AxisStateRef = 1;
 	// X @RefPos
@@ -195,7 +195,7 @@ while (!(xyz_REF_SW))
 		{	
 			axis_move(yAxis,-1,v_ref);
 		}
-	axis_move(yAxis,9600,v_ref);
+	axis_move(yAxis,960,v_max);
 	Y.AxisAbsPos = 0;
 	Y.AxisStateRef = 1;
 	// X @RefPos

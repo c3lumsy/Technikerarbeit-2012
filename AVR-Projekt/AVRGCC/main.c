@@ -44,29 +44,146 @@ void maschine_init()
 //	axis_ref();
 	
 	// IRQ enable
+	// IRQ for Touchfield
+//  	EICRA |= (1<<ISC21); //INT2 bei steigender Flanke
+//  	EIMSK |= (1<<INT2);
     sei();
 	
 	// Set Maschinestates
 	
 	MSTATE->USB_CON =0;
 	MSTATE->USB_FILE_OPEN = 0;	
+	
+	uart_puts("RDY!");
+
 }
 
 
 
 
 
-void main(void)
+int main(void)
 {
-	maschine_init();
-	
-while (1)
-{
+	maschine_init();	// FIRST CMD!!!
+
+
 
 	
-while (usb_get_state()!=1)
+	
+	
+	
+	
+	
+	
+// 	i2c_start(0xDE);
+// 	i2c_write(0x11);	// DC1
+// 	i2c_write(0x03);	// Länge der Daten
+// 	i2c_write(0x1B);	// ESC
+// 	i2c_write(0x44);	// D
+// 	i2c_write(0x4C);	// L
+// 	i2c_write(0x11 + 0x03 + 0x1B + 0x44 + 0x4C);	// bcc
+// 	i2c_stop();
+// 
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDF);
+// 	i2c_readAck();
+// 	i2c_stop();
+// 		
+// 	_delay_us(200);
+// 
+// 	i2c_start(0xDE);
+// 	i2c_write(0x11);	// DC1
+// 	i2c_write(0x03);	// Länge der Daten
+// 	i2c_write(0x1B);	// ESC
+// 	i2c_write(0x54);	// T
+// 	i2c_write(0x45);	// E
+// 	i2c_write(0x11 + 0x03 + 0x1B + 0x54 + 0x45);	// bcc
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDF);
+// 	i2c_readAck();
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDE);
+// 	i2c_write(0x11);	// DC1
+// 	i2c_write(0x03);	// Länge der Daten
+// 	i2c_write(0x1B);	// ESC
+// 	i2c_write(0x54);	// T
+// 	i2c_write(0x56);	// V
+// 	i2c_write(0xD9);	// bcc
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDF);
+// 	i2c_readAck();
+// 	i2c_stop();	
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDE);
+// 	i2c_write(0x11);	// DC1
+// 	i2c_write(0x01);	// Länge der Daten
+// 	i2c_write(0x0D);	//
+// 	i2c_write(0x11 + 0x01 + 0x0D);
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDF);
+// 	i2c_readAck();
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDE);
+// 	i2c_write(0x11);	// DC1
+// 	i2c_write(0x01);	// Länge der Daten
+// 	i2c_write(0x0A);	//
+// 	i2c_write(0x11 + 0x01 + 0x0A);
+// 	i2c_stop();
+// 	
+// 	_delay_us(200);
+// 	
+// 	i2c_start(0xDF);
+// 	i2c_readAck();
+// 	i2c_stop();
+// 	
+
+while (1)
 {
-	char temp[8];
+		if (MSTATE->USB_CON == 1)
+			{
+				PORTD |= _BV(6);
+				PORTD &= ~_BV(5);
+				MSTATE->USB_CON = 0;
+			} 
+		else
+			{
+				PORTD &= ~_BV(6);
+				PORTD |= _BV(5);
+				MSTATE->USB_CON = 1;
+			}
+			
+		if (!(PINB & (1<<PINB2)))
+		{
+			edip_in();
+		}
+			
+}
+
+
+
+
+	
+// while (usb_get_state()!=1)
+// {
+//	char temp[8];
 //	axis_move_interpol(0,0,-500,-2000,v_max);
 // 	uart_puts(ltoa(AXIS[xAxis].AxisRelPos,temp,10));
 // 	uart_puts("/");
@@ -79,28 +196,43 @@ while (usb_get_state()!=1)
 // 	uart_puts(ltoa(AXIS[xAxis].AxisRelPos,temp,10));
 // 	uart_puts("/");
 // 	uart_puts(ltoa(AXIS[yAxis].AxisRelPos,temp,10));
-// 	uart_putc(CMD_CR);	
-
-
-
+// 	uart_putc(CMD_CR);
+//}
+//
+// while (MSTATE->USB_CON==1)
+// {
+// 	usb_open_file(FILENAME);
+// 	while (MSTATE->USB_FILE_EOF != 1)
+// 	{
+// 		while (usb_get_command() != 1)
+// 		{
+// 		}
+//  		_delay_us(10);
+// 	}
+// 	while (1)
+// 	{
+// 	}
+// 	
+// }
+// }
 }
 
-while (MSTATE->USB_CON==1)
+void edip_in()
 {
-	usb_open_file(FILENAME);
-	while (MSTATE->USB_FILE_EOF != 1)
-	{
-		while (usb_get_command() != 1)
-		{
-		}
- 		_delay_us(10);
-	}
-	while (1)
-	{
-	}
+	uart_puts("IRQ");
+
+	i2c_start(0xDE);
+	i2c_write(0x12);	// DC2
+	i2c_write(0x01);	// Länge der Daten
+	i2c_write(0x53);	// S
+	i2c_write(0x12 + 0x01 + 0x53);	// bcc
 	
-}
-}
+	_delay_us(200);
+	
+// 	i2c_rep_start(0xDF);
+// 	i2c_readAck();
+//  	i2c_stop();
+
 }
 	
 // Interrupts
@@ -117,4 +249,22 @@ void UART0_RX_INT()
 		{
 			uart1_putc(uart0_trans);
 		}
+}
+
+SIGNAL(INT2_vect)
+{
+	cli();
+	uart_puts("IRQ");
+
+	i2c_start(0xDE);
+	i2c_write(0x12);	// DC2
+	i2c_write(0x01);	// Länge der Daten
+	i2c_write(0x53);	// S
+	i2c_write(0x12 + 0x01 + 0x53);	// bcc
+
+	i2c_rep_start(0xDF);
+	i2c_readAck();
+ 	i2c_stop();
+
+	sei();
 }

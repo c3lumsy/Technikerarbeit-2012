@@ -454,7 +454,6 @@ Returns:  none
 **************************************************************************/
 void uart_putc(unsigned char data)
 {
-#ifdef PCmode
     unsigned char tmphead;
 
     
@@ -469,7 +468,6 @@ void uart_putc(unsigned char data)
 
     /* enable UDRE interrupt */
     UART0_CONTROL    |= _BV(UART0_UDRIE);
-#endif
 }/* uart_putc */
 
 
@@ -481,12 +479,8 @@ Returns:  none
 **************************************************************************/
 void uart_puts(const char *s )
 {
-#ifdef PCmode
-
     while (*s) 
       uart_putc(*s++);
-
-#endif
 }/* uart_puts */
 
 

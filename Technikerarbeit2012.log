@@ -1,0 +1,11 @@
+Makro-Compiler V3.0 (01.02.2011) for
+EA eDIP128-6, EA eDIP160-7 and EA eDIP240-7
+
+Open File <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Technikerarbeit2012.kmc>
+
+--->ERROR in file <\\Vboxsvr\thehoh\Documents\GITHUB\Technikerarbeit 2012\Technikerarbeit2012.kmc>
+--->LINE 51: Constant "GENEVA10" not defined !
+---> 	#AF GENEVA10
+
+
+---> found 1 Errors !

@@ -109,10 +109,7 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="test_i2cmaster.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="twimaster.c">
+    <Compile Include="i2cmaster.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart.c">

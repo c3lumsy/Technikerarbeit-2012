@@ -18,7 +18,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #ifndef GLOBDEF_H_
 #define GLOBDEF_H_
 
-/* define CPU frequency in MHz here */
+/* define CPU frequency in Hz here */
 #ifndef F_CPU
 #define F_CPU 20000000UL
 #endif
@@ -30,6 +30,9 @@ Copyright:		(C)2012 Dennis Hohmann
 /* define BAUD of UART0 and UART1 */
 #define UART_BAUD_RATE      19200      
 #define UART1_BAUD_RATE     9600
+
+/* define I2C Clock in Hz*/
+#define SCL_CLOCK  50000UL
 
 /* define I/O */
 #define _DISABLE	0

@@ -92,7 +92,7 @@ int8_t usb_cmd_check(void)
 {
 }
 
-int8_t usb_open_file(char* f2open)
+int8_t usb_open_file(unsigned char* f2open)
 {
 		uart1_putc(CMD_OPR);
 		uart1_putc(CMD_SP);

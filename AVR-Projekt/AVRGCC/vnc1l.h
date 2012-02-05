@@ -42,7 +42,7 @@ volatile unsigned char STRING[64];
 static unsigned char FILENAME[12] = "start.tap";
 
 extern int8_t usb_get_state(void);
-extern int8_t usb_open_file(char* f2open);
+extern int8_t usb_open_file(unsigned char* f2open);
 extern int8_t usb_get_command(void);
 extern int8_t usb_get_block(int8_t byte);
 extern void usb_set_sek(int16_t sektor);

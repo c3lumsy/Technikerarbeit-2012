@@ -28,7 +28,7 @@ extern void go_cnc(void);
 
 #define xyz_step_mm 96	// x-axis steps per mm
 
-#define v_max 600	// max speed 15mm/s
+#define v_max 200	// max speed
 #define v_1 1000 
 #define v_ref 1000	// ref speed
 
