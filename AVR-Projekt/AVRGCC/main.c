@@ -45,8 +45,8 @@ void maschine_init()
 	
 	// IRQ enable
 	// IRQ for Touchfield
-//  	EICRA |= (1<<ISC21); //INT2 bei steigender Flanke
-//  	EIMSK |= (1<<INT2);
+ 	EICRA |= (1<<ISC21); //INT2 bei steigender Flanke
+ 	EIMSK |= (1<<INT2);
     sei();
 	
 	// Set Maschinestates
@@ -58,6 +58,31 @@ void maschine_init()
 
 }
 
+void edip_in()
+{
+	unsigned char c;
+
+	i2c_start(0xDE);
+	i2c_write(0x12);	// DC2
+	i2c_write(0x01);	// Länge der Daten
+	i2c_write(0x53);	// S
+	i2c_write(0x66);	// bcc
+
+	i2c_rep_start(0xDF);
+	c = i2c_readNak();
+	i2c_stop();
+	
+	if (c == 0x06)
+	{
+		while (c != 0xFF)
+		{
+			uart_putc(c);
+			i2c_rep_start(0xDF);
+			c = i2c_readNak();
+		}
+		i2c_stop();
+	}
+}
 
 
 
@@ -168,13 +193,7 @@ while (1)
 				PORTD &= ~_BV(6);
 				PORTD |= _BV(5);
 				MSTATE->USB_CON = 1;
-			}
-			
-		if (!(PINB & (1<<PINB2)))
-		{
-			edip_in();
-		}
-			
+			}			
 }
 
 
@@ -217,23 +236,7 @@ while (1)
 // }
 }
 
-void edip_in()
-{
-	uart_puts("IRQ");
 
-	i2c_start(0xDE);
-	i2c_write(0x12);	// DC2
-	i2c_write(0x01);	// Länge der Daten
-	i2c_write(0x53);	// S
-	i2c_write(0x12 + 0x01 + 0x53);	// bcc
-	
-	_delay_us(200);
-	
-// 	i2c_rep_start(0xDF);
-// 	i2c_readAck();
-//  	i2c_stop();
-
-}
 	
 // Interrupts
 void UART1_RX_INT()
@@ -254,17 +257,6 @@ void UART0_RX_INT()
 SIGNAL(INT2_vect)
 {
 	cli();
-	uart_puts("IRQ");
-
-	i2c_start(0xDE);
-	i2c_write(0x12);	// DC2
-	i2c_write(0x01);	// Länge der Daten
-	i2c_write(0x53);	// S
-	i2c_write(0x12 + 0x01 + 0x53);	// bcc
-
-	i2c_rep_start(0xDF);
-	i2c_readAck();
- 	i2c_stop();
-
+	edip_in();
 	sei();
 }
