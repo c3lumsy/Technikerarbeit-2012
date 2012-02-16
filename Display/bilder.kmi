@@ -1,7 +1,11 @@
+;------------------------------------------------------------------------------
+; used bmp´s
+
+BmpStart 	= 0	;
+BmpWarn	= 1	;
+
+
 PATH: <BITMAPS\>
-
-BmpStart = 0
-
-
-
 Picture:  BmpStart	<Start.BMP>
+Picture:  BmpWarn	<DREIECK.BMP>
+

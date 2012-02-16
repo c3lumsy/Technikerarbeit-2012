@@ -1,26 +1,17 @@
 ;------------------------------------------------------------------------------
-; Fonts einbinden  max. 15 eigene Fonts (FontNr. 1..15)
+; used fonts  (max. 15 fonts number 1..15)
 
-FONT8x8  = 0		; interner Font, immer vorhanden
+FONT8x8	= 0	; internal terminal font
 
-FONT4x6  = 1
-;FONT6x8  = 2
-;FONT7x12 = 3
+GENEVA12	= 1	;
+Chicag14	= 2	;
 
-GENEVA10  = 4
-GENEVA12  = 5
-CHICAGO14 = 6
-;SWISS30B  = 7
-BIGZIF57  = 8
 
 PATH: <FONTS\>
+Font:	GENEVA12,	<GENEVA12.FXT>
+Font:	Chicag14,	<Chicag14.FXT>
 
-Font: FONT4x6,   <4x6.FXT>
-;Font: FONT6x8,   <6x8.FXT>
-;Font: FONT7x12,  <7x12.FXT>
 
-Font: GENEVA10,  <GENEVA10.FXT>
-Font: GENEVA12,  <GENEVA12.FXT>
-Font: CHICAGO14, <CHICAG14.FXT>
-;Font: SWISS30B,  <SWISS30B.FXT>
-Font: BIGZIF57,  <BIGZIF57.FXT>
+
+
+

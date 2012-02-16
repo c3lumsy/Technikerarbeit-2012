@@ -1,4 +1,4 @@
-; Fontfile            : "5X6.FXT"
+; Fontfile            : "D:\DISKFONT\FONT6963\FONTS\FONT_FH\5X6.FH"
 ; First ASCII Nr      :  32
 ; Last  ASCII Nr      : 158
 ; Typ                 : monospaced
@@ -6,12 +6,12 @@
 ; Fontheight          :   6
 
 32  $20  ' '
-.....
-.....
-.....
-.....
-.....
-.....
+..#..
+..#..
+..#..
+#.#.#
+.###.
+..#..
 
 33  $21  '!'
 ..#..
