@@ -36,20 +36,20 @@ int8_t usb_get_state(void)
 					
 			if (!strcmp(STRING, ">"))
 				{
-					MSTATE->USB_RDY=1;
+					M_FLAGS->USB_RDY=1;
 					uart_puts("DONE");
 					uart_putc(CMD_CR);
 					return 1;	
 				}
 			if (!strcmp(STRING, "DD2"))
 				{
-					MSTATE->USB_CON=1;
+					M_FLAGS->USB_CON=1;
 					uart_puts("Disk Detected");
 					uart_putc(CMD_CR);	
 				}
 			if (!strcmp(STRING, "DR2"))
 				{
-					MSTATE->USB_CON=0;
+					M_FLAGS->USB_CON=0;
 					uart_puts("Disk Removed");
 					uart_putc(CMD_CR);	
 				}
@@ -75,7 +75,7 @@ int8_t usb_get_state(void)
 				}
 		 	STRING[0]='\0';
 		}
-		if (MSTATE->USB_CON == 1)
+		if (M_FLAGS->USB_CON == 1)
 			{
 				PORTD |= _BV(6);
 				PORTD &= ~_BV(5);
@@ -101,9 +101,9 @@ int8_t usb_open_file(unsigned char* f2open)
 		_delay_ms(100);		// Zeit zum antworten vom Stick...
 		if (usb_get_state() == 1)
 		{
-			MSTATE->USB_FILE_OPEN = 1;
-			MSTATE->USB_FILE_EOF = 0;
-			MSTATE->USB_SEK = 0;
+			M_FLAGS->USB_FILE_OPEN = 1;
+			M_FLAGS->USB_FILE_EOF = 0;
+			M_FLAGS->USB_SEK = 0;
 			uart_puts("FILE ");
 			uart_puts(FILENAME);
 			uart_putc(CMD_CR);
@@ -125,7 +125,7 @@ void usb_set_sek(int16_t sektor)
 
 int8_t usb_get_block(int8_t byte)
 {
-	if (MSTATE->USB_FILE_OPEN == 1)
+	if (M_FLAGS->USB_FILE_OPEN == 1)
 	{
 		char c[3];
 		itoa(byte,c,10);
@@ -133,7 +133,7 @@ int8_t usb_get_block(int8_t byte)
 		uart1_putc(CMD_SP);	
 		uart1_puts(c);
 		uart1_putc(CMD_CR);
-		MSTATE->USB_SEK += byte;
+		M_FLAGS->USB_SEK += byte;
 		_delay_ms(byte + 8);			// pro byte 1ms warten!
 		uart1_gets(STRING,CMD_CR);
 		return 1;	
@@ -151,9 +151,9 @@ int8_t usb_get_command(void)
 		if (STRING[0] == 'N')
 		{
 			usb_get_block(6);			// Step-Number auslesen und wegschreiben!
-			MSTATE->Last_GCODE = atoi(STRING);
-			MSTATE->Last_GCODE /= 10;
-			itoa(MSTATE->Last_GCODE,STRING,10);
+			M_FLAGS->Last_GCODE = atoi(STRING);
+			M_FLAGS->Last_GCODE /= 10;
+			itoa(M_FLAGS->Last_GCODE,STRING,10);
 			uart_putc(CMD_CR);
 			uart_puts(STRING);
 		}

@@ -15,12 +15,14 @@ Author:			Dennis Hohmann
 Email:			hohmannd@web.de
 Copyright:		(C)2012 Dennis Hohmann
 ************************************************************************/
-
 #include "globdef.h"
+
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include <string.h>
+
+#include "uart.h"
 #include "vnc1l.h"
 #include "gocnc.h"
 
@@ -100,11 +102,11 @@ void gcode_g_check()
 		
 			break;
 		case 20:
-				MSTATE->GCODE_MM = 1;
+				M_FLAGS->GCODE_MM = 1;
 				uart_puts("Maschineneinheit ist INCH");	
 			break;
 		case 21:
-				MSTATE->GCODE_MM = 1;
+				M_FLAGS->GCODE_MM = 1;
 				uart_puts("Maschineneinheit ist MM");	
 			break;
 		case 90:
@@ -129,7 +131,7 @@ void gcode_m_check()
 		// Programmende
 				uart_putc(CMD_CR);
 				uart_puts("EOF");
-				MSTATE->USB_FILE_EOF = 1;
+				M_FLAGS->USB_FILE_EOF = 1;
 			break;
 		case 3:	
 		// Spindelstart CW

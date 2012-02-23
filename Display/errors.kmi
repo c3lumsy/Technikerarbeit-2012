@@ -1,0 +1,76 @@
+
+;------------------------------------------------------------------------------
+; used errors
+
+MnClear	= 97
+MnWarnung	= 98
+MnQuitt	= 99	
+
+Sm000	 	= 100	; Controller BEREIT!
+Sm001		= 101	; Keine CNC-Maschine gefunden!
+Sm002		= 102	; Kein USB-Stick gefunden!
+Sm003	 	= 103	; USB-Stick gefunden.
+Sm004		= 104	; USB-Stick gezogen!
+Sm005		= 105	;
+Sm006	 	= 106	;
+Sm007		= 107	;
+Sm008		= 108	;
+Sm009	 	= 109	;
+Sm010		= 110	;
+Sm011		= 111	;
+Sm012	 	= 112	;
+Sm013		= 113	;
+Sm014		= 114	;
+Sm015		= 115	;
+Sm016	 	= 116	;
+Sm017		= 117	;
+Sm018		= 118	;
+Sm019		= 119	;
+Sm020		= 120	;
+
+Macro:	Sm000
+	#MN MnClear
+	#ZL 50,2,"Controller BEREIT!" ; place text
+Macro:	Sm001
+	#MN MnClear
+	#ZL 50,2,"Keine CNC-Maschine gefunden!" ; place text
+	#MN MnWarnung
+Macro:	Sm002
+	#MN MnClear
+	#ZL 50,2,"Kein USB-Stick gefunden!" ; place text
+	#MN MnWarnung
+Macro:	Sm003
+	#MN MnClear
+	#ZL 50,2,"USB-Stick gefunden." ; place text
+Macro:	Sm004
+	#MN MnClear
+	#ZL 50,2,"USB-Stick gezogen!" ; place text
+	#MN MnWarnung
+Macro:	Sm005
+	#MN MnClear
+	#ZL 50,2,"Meldung 105!" ; place text
+	#MN MnWarnung
+Macro:	Sm006
+	#MN MnClear
+	#ZL 50,2,"Meldung 106!" ; place text
+	#MN MnWarnung
+Macro:	Sm007
+	#MN MnClear
+	#ZL 50,2,"Meldung 107!" ; place text
+	#MN MnWarnung
+
+
+Macro: MnClear
+	#RL 46,1,238,35
+	
+Macro: MnWarnung	
+	#UV SET
+	#UB BLINKONOFF
+	#UI 2,2,BmpWarn
+
+TouchMacro: MnQuitt	
+	#UV DELETE
+	#UB NOBLINK
+	#UI 2,2,BmpWarn
+	#MN 97
+	#SB 27,"EQ"	; send error quit

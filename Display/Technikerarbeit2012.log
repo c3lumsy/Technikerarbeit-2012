@@ -1,27 +1,28 @@
 Makro-Compiler V3.2 (01.12.2011) for
 EA eDIP128-6, EA eDIP160-7 and EA eDIP240-7
 
-Open File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\Technikerarbeit2012.kmc>
-Open File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\konstanten.kmi>
-Open File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\fonts.kmi>
-Import Font-File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\FONTS\GENEVA12.FXT>
+Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.kmc>
+Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\konstanten.kmi>
+Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\fonts.kmi>
+Import Font-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\GENEVA12.FXT>
             height: 12 dots, used codes: 32..216, 2875 bytes
-Import Font-File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\FONTS\Chicag14.FXT>
+Import Font-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\Chicag14.FXT>
             height: 14 dots, used codes: 32..248, 2739 bytes
-Open File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\bilder.kmi>
-Import Picture-File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\BITMAPS\Start.BMP>
-Import Picture-File <F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\BITMAPS\DREIECK.BMP>
+Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\bilder.kmi>
+Import Picture-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\BITMAPS\Start.BMP>
+Import Picture-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\BITMAPS\DREIECK.BMP>
+Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\errors.kmi>
 
-Write EEPROM Upload File F:\_Technikerprojek2012\c3lumsy-Technikerarbeit-2012-210374d\Display\Technikerarbeit2012.EEP
+Write EEPROM Upload File H:\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
 
 EEPROM Memory overview:
      System:       3650 bytes
    2 Fonts:        5614 bytes
    2 Pictures:     4036 bytes
-   5 Macros:        277 bytes
-   3 Touchmacros:   477 bytes
-   2 Menumacros:     91 bytes
+  14 Macros:        522 bytes
+   3 Touchmacros:   463 bytes
+   3 Menumacros:     71 bytes
  ----------------------------
-          sumary: 14145 bytes
+          sumary: 14356 bytes
 
 ERROR: cannot open "eDIP Programmer"

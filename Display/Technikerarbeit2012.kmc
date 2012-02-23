@@ -14,6 +14,7 @@ USB: "eDIP Programmer"	; use EA 9777-1USB eDIP Programmer (only Windows 2000/XP)
 include <konstanten.kmi>
 include <fonts.kmi>
 include <bilder.kmi>
+include <errors.kmi>
 
 ;=============================================================================
 ; Macro Nummern
@@ -24,9 +25,6 @@ TmStartMenu	= 1
 TmHauptMenu	= 2
 TmHand		= 3
 TmVersion	= 4
-
-MnWarnung	= 100
-MnQuitt	= 101	
 
 MnReturn	= 255
 
@@ -65,15 +63,13 @@ TouchMacro: TmHauptMenu
 	#NW 0		; menu angle
 	#NT 1		; touch menu opens automatically
 
-	#AM 10,40,83,80,0,0,10, "UCAutomatik|Bottem-Layout|Top-Layout|Bohren"		
-	#AM 83,40,156,80,0,0,20, "UCHand|Achsen verfahren|Referenzfahrt|Werkzeug einmessen|Gehe zu Position"			
-	#AM 156,40,230,80,0,0,30, "UCEinstellung|Maschinengeschwindigkeit|STATUS"
+	#AM 10,40,83,80,0,0,10, "UCAutomatik|!Bottem-Layout|!Top-Layout|!Bohren"		
+	#AM 83,40,156,80,0,0,20, "UCHand|Achsen verfahren|Referenzfahrt|!Werkzeug einmessen|!Gehe zu Position"			
+	#AM 156,40,230,80,0,0,30, "UCEinstellung|!Maschinengeschwindigkeit|!STATUS"
 
 	#AT 169,107,239,127, TmVersion,0, "CVersion"
 
 	#AT 10,85,83,125,MnQuitt,0, "CQuittieren"	;
-
-#MN 100
 
 	#GR 45,0,240,36	; Frame for Error-Msg
 
@@ -135,23 +131,15 @@ Macro: MnPowerOn		; Power-On/Reset Makro
 Macro: MnReturn
 	#MT TmHauptMenu
 
-Macro: MnWarnung	
-	#UV SET
-	#UB BLINKONOFF
-	#UI 2,2,BmpWarn
-
-TouchMacro: MnQuitt	
-	#UV DELETE
-	#UB NOBLINK
-	#UI 2,2,BmpWarn
-	#RL 46,1,238,35
-	#ZL 50,2,"Keine Stoerung!" ; place text
 ;=============================================================================
 ; Menue - Macros
 MenueMacro: 20	; Handbetrieb
 	#MN TmHand
 
 MenueMacro: 21	; Referenzfahrt
-	#ZL 50,2,"Keine Maschine erkannt!" ; place text
-	#ZL 50,12,"Keine Maschine erkannt!" ; place text
-	#ZL 50,22,"Keine Maschine erkannt!" ; place text
+	#ZL 50,2,"Referenzfahrt laeuft!" ; place text
+	#SB 27,"A0R"	; ESC A "Füllzeichen" "R"eferenz
+
+MenueMacro: 22	; WZG einmessen
+	#ZL 50,2,"Vermessung laeuft!" ; place text
+	#SB 27,"A0W"	; ESC A "Füllzeichen" "W"erkzeug

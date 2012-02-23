@@ -38,8 +38,7 @@ Copyright:		(C)2012 Dennis Hohmann
 volatile unsigned char STRING[64];
 
 
-//volatile unsigned char FILENAME[12];
-static unsigned char FILENAME[12] = "start.tap";
+
 
 extern int8_t usb_get_state(void);
 extern int8_t usb_open_file(unsigned char* f2open);
