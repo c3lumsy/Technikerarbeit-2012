@@ -24,175 +24,74 @@ Copyright:		(C)2012 Dennis Hohmann
 
 #include "uart.h"
 #include "i2cmaster.h"
+#include "eDIP240.h"
 #include "gocnc.h"
 #include "vnc1l.h"
 
 void maschine_init()
 {
-	// CNC-Outputs / PA6 Ref-Switch
+// CNC-Outputs / PA6 Ref-Switch
 	DDRA |= _BV(7)|_BV(5)|_BV(4)|_BV(3)|_BV(2)|_BV(1)|_BV(0);   
 	DDRD |= _BV(7)|_BV(6)|_BV(5);
 	
-	// Init UARTS
+// Delay for startup Display and VDRIVE2
+	_delay_ms(250);
+	
+// Init UARTS
     uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) ); 
 	uart1_init( UART_BAUD_SELECT(UART1_BAUD_RATE,F_CPU) ); 
 
-	// Init I2C
+// Init I2C
 	i2c_init();
 	
-	// CNC ref
-//	axis_ref();
-	
-	// IRQ enable
-	// IRQ for Touchfield
- 	EICRA |= (1<<ISC21); //INT2 bei steigender Flanke
+// IRQ enable
+// IRQ for eDIP Touch PIN20
+ 	EICRA |= (1<<ISC21);				// INT2 on rising edge
  	EIMSK |= (1<<INT2);
-    sei();
+    sei();								// Interrupts enable
 	
-	// Set Maschinestates
-	
-	MSTATE->USB_CON =0;
-	MSTATE->USB_FILE_OPEN = 0;	
-	
-	uart_puts("RDY!");
+// Set Maschineflags
+	M_FLAGS->ERROR_GLOB = 0;				// clear all errors	
 
+	M_FLAGS->EDIP_ACTION = 0;			// no action from eDIP
+	M_FLAGS->EDIP_CNC_HAND = 0;			// eDIP in Hand menu
+	
+		
+	M_FLAGS->USB_CON =0;				// USB-Stick not connected till check
+	M_FLAGS->USB_FILE_OPEN = 0;			// If Stick connected, first File is closed
+	M_FLAGS->USB_FILE_EOF = 0;			// EndOfFile Flag cleared
+
+// Display RDY MSG
+	edip_put_CMD(DC1,"#MN100");			// MSG "Controller BEREIT!"
 }
-
-void edip_in()
-{
-	unsigned char c;
-
-	i2c_start(0xDE);
-	i2c_write(0x12);	// DC2
-	i2c_write(0x01);	// Länge der Daten
-	i2c_write(0x53);	// S
-	i2c_write(0x66);	// bcc
-
-	i2c_rep_start(0xDF);
-	c = i2c_readNak();
-	i2c_stop();
-	
-	if (c == 0x06)
-	{
-		while (c != 0xFF)
-		{
-			uart_putc(c);
-			i2c_rep_start(0xDF);
-			c = i2c_readNak();
-		}
-		i2c_stop();
-	}
-}
-
-
 
 
 int main(void)
 {
-	maschine_init();	// FIRST CMD!!!
+	maschine_init();					// first CMD in main-loop!
 
-
-
-	
-	
-	
-	
-	
-	
-	
-// 	i2c_start(0xDE);
-// 	i2c_write(0x11);	// DC1
-// 	i2c_write(0x03);	// Länge der Daten
-// 	i2c_write(0x1B);	// ESC
-// 	i2c_write(0x44);	// D
-// 	i2c_write(0x4C);	// L
-// 	i2c_write(0x11 + 0x03 + 0x1B + 0x44 + 0x4C);	// bcc
-// 	i2c_stop();
-// 
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDF);
-// 	i2c_readAck();
-// 	i2c_stop();
-// 		
-// 	_delay_us(200);
-// 
-// 	i2c_start(0xDE);
-// 	i2c_write(0x11);	// DC1
-// 	i2c_write(0x03);	// Länge der Daten
-// 	i2c_write(0x1B);	// ESC
-// 	i2c_write(0x54);	// T
-// 	i2c_write(0x45);	// E
-// 	i2c_write(0x11 + 0x03 + 0x1B + 0x54 + 0x45);	// bcc
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDF);
-// 	i2c_readAck();
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDE);
-// 	i2c_write(0x11);	// DC1
-// 	i2c_write(0x03);	// Länge der Daten
-// 	i2c_write(0x1B);	// ESC
-// 	i2c_write(0x54);	// T
-// 	i2c_write(0x56);	// V
-// 	i2c_write(0xD9);	// bcc
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDF);
-// 	i2c_readAck();
-// 	i2c_stop();	
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDE);
-// 	i2c_write(0x11);	// DC1
-// 	i2c_write(0x01);	// Länge der Daten
-// 	i2c_write(0x0D);	//
-// 	i2c_write(0x11 + 0x01 + 0x0D);
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDF);
-// 	i2c_readAck();
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDE);
-// 	i2c_write(0x11);	// DC1
-// 	i2c_write(0x01);	// Länge der Daten
-// 	i2c_write(0x0A);	//
-// 	i2c_write(0x11 + 0x01 + 0x0A);
-// 	i2c_stop();
-// 	
-// 	_delay_us(200);
-// 	
-// 	i2c_start(0xDF);
-// 	i2c_readAck();
-// 	i2c_stop();
-// 	
 
 while (1)
 {
-		if (MSTATE->USB_CON == 1)
+	
+// Check if new action from eDIP avaliable ?
+	if (M_FLAGS->EDIP_ACTION == 1)
+	{
+		edip_check_input(eDIP_BUFFER);
+	}
+
+// Toggle LED´s on POLLIN-Board
+		if (M_FLAGS->USB_CON == 1)
 			{
 				PORTD |= _BV(6);
 				PORTD &= ~_BV(5);
-				MSTATE->USB_CON = 0;
+				M_FLAGS->USB_CON = 0;
 			} 
 		else
 			{
 				PORTD &= ~_BV(6);
 				PORTD |= _BV(5);
-				MSTATE->USB_CON = 1;
+				M_FLAGS->USB_CON = 1;
 			}			
 }
 
@@ -256,7 +155,12 @@ void UART0_RX_INT()
 
 SIGNAL(INT2_vect)
 {
-	cli();
-	edip_in();
-	sei();
+// Interrupt from eDIP-Pin20
+	
+	cli();								// disable interrupts				
+	edip_get_buffer(eDIP_BUFFER);		// save I2C-BUFFER
+	M_FLAGS->EDIP_ACTION = 1;			// set Flag for main-loop
+	uart_puts(eDIP_BUFFER);				// only for debugging can be removed!
+	sei();								// enable interrupts
+	
 }
