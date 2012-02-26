@@ -44,14 +44,27 @@ void maschine_init()
 // Init I2C
 	i2c_init();
 	
-// IRQ enable
+// IRQ defines
+
 // IRQ for eDIP Touch PIN20
  	EICRA |= (1<<ISC21);				// INT2 on rising edge
  	EIMSK |= (1<<INT2);
+
+// IRQ for CTC-Mode	
+
+// 	TCCR1A = 0x00;						// no Port operation, kein PWM
+// 	TCCR1B = (1<<WGM12);				// CTC1
+// 	TIMSK0 |= (1<<OCIE1A);				// Compare Match A Interrupt Enable
+// 	 
+	 
+	 
+	 
+	 
+// IRQ enable	 
     sei();								// Interrupts enable
 	
 // Set Maschineflags
-	M_FLAGS->ERROR_GLOB = 0;				// clear all errors	
+	M_FLAGS->ERROR_GLOB = 0;			// clear all errors	
 
 	M_FLAGS->EDIP_ACTION = 0;			// no action from eDIP
 	M_FLAGS->EDIP_CNC_HAND = 0;			// eDIP in Hand menu
@@ -60,15 +73,20 @@ void maschine_init()
 	M_FLAGS->USB_CON =0;				// USB-Stick not connected till check
 	M_FLAGS->USB_FILE_OPEN = 0;			// If Stick connected, first File is closed
 	M_FLAGS->USB_FILE_EOF = 0;			// EndOfFile Flag cleared
+	
+	M_FLAGS->AXIS_v1 = 2000;			// Set Maschinespeed to default
 
 // Display RDY MSG
-	edip_put_CMD(DC1,"#MN100");			// MSG "Controller BEREIT!"
+	
+	edip_msg(100);						// "Controller BEREIT!"
 }
 
 
 int main(void)
 {
 	maschine_init();					// first CMD in main-loop!
+
+edip_put_POS(X.AxisRelPos,0,0);
 
 
 while (1)
@@ -77,6 +95,7 @@ while (1)
 // Check if new action from eDIP avaliable ?
 	if (M_FLAGS->EDIP_ACTION == 1)
 	{
+/*		uart_puts(eDIP_BUFFER);*/
 		edip_check_input(eDIP_BUFFER);
 	}
 
@@ -157,10 +176,19 @@ SIGNAL(INT2_vect)
 {
 // Interrupt from eDIP-Pin20
 	
-	cli();								// disable interrupts				
+	cli();								// disable interrupts		
 	edip_get_buffer(eDIP_BUFFER);		// save I2C-BUFFER
 	M_FLAGS->EDIP_ACTION = 1;			// set Flag for main-loop
-	uart_puts(eDIP_BUFFER);				// only for debugging can be removed!
+//	uart_puts(eDIP_BUFFER);				// only for debugging can be removed!
 	sei();								// enable interrupts
 	
 }
+
+SIGNAL(TIMER0_COMPA_vect)
+{
+
+}
+
+SIGNAL(TWI_vect)
+{
+}	

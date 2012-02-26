@@ -19,10 +19,14 @@ EEPROM Memory overview:
      System:       3650 bytes
    2 Fonts:        5614 bytes
    2 Pictures:     4036 bytes
-  14 Macros:        522 bytes
+  14 Macros:        533 bytes
    3 Touchmacros:   463 bytes
    3 Menumacros:     71 bytes
  ----------------------------
-          sumary: 14356 bytes
+          sumary: 14367 bytes
 
-ERROR: cannot open "eDIP Programmer"
+start eDIP-Simulation
+
+"eDIP Programmer" not found!
+
+ERROR: cannot open COM3: !

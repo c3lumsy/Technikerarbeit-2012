@@ -55,6 +55,7 @@ void axis_step(int8_t AxisSelect,uint16_t AxisSpeed){
 	#ifndef NOdelay
 	_delay_us(AxisSpeed);
 	#endif
+	
 	AXIS[AxisSelect].AxisAbsPos += (int8_t)AXIS[AxisSelect].AxisDirection;
 	AXIS[AxisSelect].AxisRelPos += (int8_t)AXIS[AxisSelect].AxisDirection;
 }
@@ -163,19 +164,16 @@ void axis_move_interpol(int16_t x0, int16_t y0, int32_t xAxisGoto, int32_t yAxis
 
 void axis_ref(){
 // Define AxisMaxPos
-	// X max 200mm / 12800 Steps!
-		X.AxisMaxPos = 12800;
-	// Y max 290mm / 18560 Steps!
-		Y.AxisMaxPos = 18560;
-	// Z max 65mm / 4160 Steps!
-		Z.AxisMaxPos = 4160;
+		X.AxisMaxPos = X_POS_MAX;
+		Y.AxisMaxPos = Y_POS_MAX;
+		Z.AxisMaxPos = Z_POS_MAX;
 				
 // Ref Z Axis
 while (!(xyz_REF_SW))
 		{
 			axis_move(zAxis,1,v_ref);
 		}
-	axis_move(zAxis,-4000,v_ref);
+	axis_move(zAxis,-96,v_ref);
 	Z.AxisAbsPos = 0;
 	Z.AxisStateRef = 1;
 	// Z @RefPos
@@ -185,7 +183,7 @@ while (!(xyz_REF_SW))
 		{
 			axis_move(xAxis,-1,v_ref);
 		}
-	axis_move(xAxis,18240,v_ref);
+	axis_move(xAxis,96,v_ref);
 	X.AxisAbsPos = 0;
 	X.AxisStateRef = 1;
 	// X @RefPos
@@ -195,14 +193,17 @@ while (!(xyz_REF_SW))
 		{	
 			axis_move(yAxis,-1,v_ref);
 		}
-	axis_move(yAxis,960,v_ref);
+	axis_move(yAxis,96,v_ref);
 	Y.AxisAbsPos = 0;
 	Y.AxisStateRef = 1;
 	// X @RefPos
-	_delay_ms(1000);
 }
 
-void go_cnc(void)
-{	
-
+void axis_set_speed(uint8_t speed)
+{
+	uint16_t v_1 = v_min - v_max;
+	v_1 /= 100;
+	v_1 *= speed;
+	v_1 = v_min - v_1;
+	M_FLAGS->AXIS_v1 = v_1;
 }

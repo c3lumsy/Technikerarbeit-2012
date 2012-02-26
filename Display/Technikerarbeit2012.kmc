@@ -1,8 +1,8 @@
 eDIP240-7 "CNC-Controller"	; define eDIP240-7, "Projectname" max. 30 character
 
-;SIMULATION			; start simulation
+SIMULATION			; start simulation
+COM3: 115200			; program eDIP on COMx with 115200 Baud
 
-;COM1: 115200			; program eDIP on COMx with 115200 Baud
 USB: "eDIP Programmer"	; use EA 9777-1USB eDIP Programmer (only Windows 2000/XP) 
 				; using USB under WIN98/ME search for COM port (Control Panel/Gerätemanager)
 
@@ -82,14 +82,17 @@ TouchMacro: TmVersion
 
 Macro: TmHand
 	
-	stx = 0
-	sty = 25
+	stx = 70
+	sty = 40
 	
 	x = 50		; Tastenbreite
-	y = 30		; Tastenhöhe
+	y = 20		; Tastenhöhe
 
 	#DL
 	#AL 0,0
+
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 99,107,169,127,MnQuitt,0, "CQuittieren"	;
 
 	#AT stx+x,sty,stx+x+x,sty+y,'5','0', "CY-Zurueck"		;
 	#AT stx+x,sty+y+y,stx+x+x,sty+y+y+y,'6','0', "CY-Vor"		;
@@ -98,16 +101,14 @@ Macro: TmHand
 	#AT stx+x+x,sty,stx+x+x+x,sty+y,'1','0', "CZ-Auf"		;
 	#AT stx+x+x,sty+y+y,stx+x+x+x,sty+y+y+y,'2','0', "CZ-Ab"	;
 
-	#BO 1,185,25,220,100,0,100,1,4	;
+	#BO 1,15,40,50,110,0,100,1,4	;
 	#AB 1					;
 	#BA 1,25				;
 	#BS 1					;
 
 	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
 	
-	#ZL 40,0,"Achs-Auswahl"
-	#ZL 165,0,"Achs-|Geschwindigkeit"
-
+	#ZL 10,115,"Achsspeed"
 
 Macro: TmStartMenu
 	#DL
@@ -125,6 +126,7 @@ Macro: TmStartMenu
 
 Macro: MnPowerOn		; Power-On/Reset Makro
 	#TA			; Terminal aus
+	#AS 0			; Summer aus
 	#AQ 1			; Bargraph automatisch senden
 	#MN TmStartMenu	; Hauptmenu anzeigen
 

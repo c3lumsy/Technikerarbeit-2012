@@ -20,12 +20,12 @@ Copyright:		(C)2012 Dennis Hohmann
 #define GOCNC_H_
 
 extern void axis_ref(void);
+extern void axis_set_speed(uint8_t speed);
+
 extern void axis_move(int8_t AxisSelect,int16_t AxisGoto, uint16_t AxisSpeed);
 extern void axis_move_single(int8_t AxisSelect,int32_t AxisGoto,uint16_t AxisSpeed); // Move single axis
 extern void axis_move_parallel(int32_t xAxisGoto,int32_t yAxisGoto,uint16_t AxisSpeed);	// Move XY axis
 extern void axis_move_interpol(int16_t x0, int16_t y0, int32_t xAxisGoto, int32_t yAxisGoto, uint16_t AxisSpeed);	// Move XY interpol
-
-extern void go_cnc(void);
 
 typedef struct _structaxis{
 	int8_t AxisStateRef:1;		// Achse referiert ?

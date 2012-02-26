@@ -41,6 +41,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #define	_ENABLE		1
 #define _ON			1
 #define _TRUE		!=0
+#define CR			0x0D
 
 /* define AXIS */
 #define CNC_PORT PORTA					// Port to goCNC UNI1500
@@ -50,16 +51,20 @@ Copyright:		(C)2012 Dennis Hohmann
 #define yAxis 1
 #define zAxis 2
 
-#define xyz_step_mm 96					// x-axis steps per mm
+#define xyz_step_mm 96					// axis solution steps per mm
 
-#define v_max 200						// max speed
-#define v_1 1000
-#define v_hand 1000						// hand speed
+#define v_max 850						// max speed
+#define v_min 7000						// min speed
 #define v_ref 1500						// ref speed
 
 #define X AXIS[xAxis]
 #define Y AXIS[yAxis]
 #define Z AXIS[zAxis]
+
+#define X_POS_MAX 12800			// X max 200mm / 12800 Steps!
+#define Y_POS_MAX 18560			// Y max 290mm / 18560 Steps!
+#define Z_POS_MAX 4160			// Z max 65mm / 4160 Steps!
+
 
 /* define eDIP240-7 Display */
 char* eDIP_BUFFER[8];					// BUFFER for eDIP Input
@@ -69,6 +74,7 @@ static char FILENAME[12] = "start.tap";
 
 /* define Maschine State */
 typedef struct _structmachinestate{
+	unsigned int AXIS_v1:13;			// Glogal Maschinespeed 12Bit 4096
 	unsigned char USB_CON:1;			// USB connected
 	unsigned char USB_RDY:1;			// USB Ready
 	unsigned char USB_FILE_OPEN:1;		// USB File open
@@ -76,9 +82,7 @@ typedef struct _structmachinestate{
 	unsigned char PROG_SEL:8;			// Programm-Select		
 	unsigned int Last_GCODE:16;			// Number of the last gcode command
 	unsigned char USB_FILE_EOF:1;		// EndOfFile
-	
 	unsigned char GCODE_MM:1;			// Maschineunits inch=0 / mm=1; 
-
 	unsigned char EDIP_ACTION:1;		// Flag for new Action from eDIP
 	unsigned char EDIP_CNC_HAND:1;
 
