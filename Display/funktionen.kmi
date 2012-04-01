@@ -1,0 +1,156 @@
+;------------------------------------------------------------------------------
+; used funktionen
+
+
+TouchMacro: TmHauptMenu
+	x=20
+	#DL
+	#AL 0,0
+	#UV 1
+	#AE 13		; Touch Frames
+	#AF 1		; Touch Fonts
+
+	#ZF 1		; Text Fonts
+
+;--- Menue-Bar ---
+	#NF 1		; set Menue font to CHICAGO14
+	#NY 1		; adding 2 additional dots between two menue items
+	#NW 0		; menu angle
+	#NT 1		; touch menu opens automatically
+
+	#AM 10,40,83,80,0,0,10, "UCAutomatik|Unterseite frasen?|Unterseite bohren?|Oberseite frasen?|Oberseite bohren?"		
+	#AM 83,40,156,80,0,0,20, "UCHand|Achsen verfahren|Referenzfahrt|Werkzeug einmessen|!Gehe zu Position"			
+	#AM 156,40,230,80,0,0,30, "UCEinstellung|USB-BUFFER reset|!STATUS"
+
+	#AT 169,107,239,127, TmVersion,0, "CVersion"
+
+	#AT 10,85,83,125,MnQuitt,0, "CQuittieren"	;
+
+	#GR 45,0,240,36	; Frame for Error-Msg
+
+Macro: TmHand
+	
+	stx = 70
+	sty = 40
+	
+	x = 50		; Tastenbreite
+	y = 20		; Tastenhöhe
+
+	#DL
+	#AL 0,0
+
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 99,107,169,127,MnQuitt,0, "CQuittieren"	;
+
+	#AT stx+x,sty,stx+x+x,sty+y,'5','0', "CY-Zurueck"		;
+	#AT stx+x,sty+y+y,stx+x+x,sty+y+y+y,'6','0', "CY-Vor"		;
+	#AT stx+x+x,sty+y,stx+x+x+x,sty+y+y,'4','0', "CX-Rechts"	;
+	#AT stx,sty+y,stx+x,sty+y+y,'3','0', "CX-Links"			;
+	#AT stx+x+x,sty,stx+x+x+x,sty+y,'1','0', "CZ-Auf"		;
+	#AT stx+x+x,sty+y+y,stx+x+x+x,sty+y+y+y,'2','0', "CZ-Ab"	;
+
+	#BO 1,15,40,50,110,0,100,1,4	;
+	#AB 1					;
+	#BA 1,25				;
+	#BS 1					;
+
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	
+	#ZL 10,115,"Achsspeed"
+
+TouchMacro: TmAutoStart
+	#AL 0,0
+
+	#SB 27,"AAS"	; send START
+
+	#AT 10,40,83,80,MnQuitt,0, "CQuittieren"	;
+	#AT 83,40,156,80,TmAutoBreak,0, "CPause ?"
+	#AT 156,40,229,80,TmAutoAbort,0, "CBeenden ?"
+
+TouchMacro: TmAutoBreak
+	#SB 27,"AAB"	; send BREAK
+	#AT 83,40,156,80,TmAutoConti,0, "CFortsetzen ?"
+
+TouchMarco: TmAutoConti
+	#SB 27,"AAS"	; send BREAK
+	#AT 83,40,156,80,TmAutoBreak,0, "CPause ?"
+
+TouchMacro: TmAutoAbort
+	#AL 0,0
+	#SB 27,"AAA"	; send ABORT
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	#MN 110
+
+Macro: MnClear
+	#RL 46,1,238,35
+	
+Macro: MnWarnung	
+	#UV SET
+	#UB BLINKONOFF
+	#UI 2,2,BmpWarn
+
+Macro: MnWerkzeug
+	#MN MnWarnung
+	#AT 83,85,156,125,TmWzgOK,0, "CWerkzeug OK?"	;
+	
+TouchMacro: TmWzgOK
+	#UV DELETE
+	#UB NOBLINK
+	#UI 2,2,BmpWarn
+	#MN 97
+	#SB 27,"ET"	; send tool quit
+
+TouchMacro: MnQuitt	
+	#UV DELETE
+	#UB NOBLINK
+	#UI 2,2,BmpWarn
+	#MN 97
+	#SB 27,"EQ"	; send error quit
+
+;=============================================================================
+; Menue - Macros
+MenueMacro: 10	; Bot_Etching
+	#DL
+	#AL 0,0
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	#AT 83,40,156,80,TmAutoStart,0, "CBE.tap starten?";	
+	#SB 27,"ABE"
+
+MenueMacro: 11	; Bot_Drill
+	#DL
+	#AL 0,0
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	#AT 83,40,156,80,TmAutoStart,0, "CBD.tap starten?";	
+	#SB 27,"ABD"	;
+
+MenueMacro: 12	; Top_Etching
+	#DL
+	#AL 0,0
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	#AT 83,40,156,80,TmAutoStart,0, "CTE.tap starten?";	
+	#SB 27,"ATE"
+
+MenueMacro: 13	; Top_Drill
+	#DL
+	#AL 0,0
+	#GR 45,0,240,36	; Frame for Error-Msg
+	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
+	#AT 83,40,156,80,TmAutoStart,0, "CTD.tap starten?";	
+	#SB 27,"ATD"
+
+MenueMacro: 20	; Handbetrieb
+	#MN TmHand
+
+MenueMacro: 21	; Referenzfahrt
+	#ZL 50,2,"Referenzfahrt laeuft!" ; place text
+	#SB 27,"A0R"	; ESC A "Füllzeichen" "R"eferenz
+
+MenueMacro: 22	; WZG einmessen
+	#ZL 50,2,"Vermessung laeuft!" ; place text
+	#SB 27,"A0W"	; ESC A "Füllzeichen" "W"erkzeug
+
+MenueMacro: 30	; USB Buffer reset
+	#SB 27,"AAX"

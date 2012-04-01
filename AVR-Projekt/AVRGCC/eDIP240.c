@@ -18,6 +18,7 @@ Copyright:		(C)2012 Dennis Hohmann
 
 #include <stdlib.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <string.h>
 
@@ -34,7 +35,7 @@ uint8_t edip_put_CMD(uint8_t CMDTyp, char* daten)
 	uint8_t n = 0;
 	char c = 0;
 	
-	uint8_t i = strlen(daten);		// check sting lengh
+	uint8_t i = strlen(daten)+1;	// check sting lengh
 	
 //	uart_puts(daten);				// debugging can removed
 	
@@ -46,10 +47,11 @@ resend:
 	bcc += i;						// add payload count to checksum
 	for (n=0; daten[n] != 0; n++)	// loop till all payloads written
 		{
-//uart_putc(daten[n]);				// debugging
 			i2c_write(daten[n]);
 			bcc += daten[n];		// add actual payload to checksum 
 		}
+	i2c_write(CR);
+	bcc += CR;
 	i2c_write(bcc);					// send checksum
 
 	i2c_start(ADDRESS + READ);		// open I2C to read
@@ -107,58 +109,77 @@ uint8_t edip_msg(uint8_t msgnr)
 			return 1;					// return 1 if ACK
 		}
 }
-uint8_t edip_put_POS(int32_t xpos,int16_t ypos,int16_t zpos)
+
+ uint8_t edip_put_pos(uint8_t x_showpos,uint8_t y_showpos,char dir,int32_t input)
 {
-	edip_put_text(15,15,'R',x);
+uint8_t bcc = 0;					// Checksum clear!
+uint8_t i = 6;						// Anzahl payload 8 byte grundgerüst
+uint8_t n = 0;
+unsigned char cc;					//
+unsigned char x[4];
+unsigned char y[4];
+unsigned char c[8];					//
+	
+	utoa(x_showpos,x,10);
+	i += strlen(x);
 
-}
+	utoa(y_showpos,y,10);
+	i += strlen(y);
 
-uint8_t edip_put_text(uint8_t x_showpos,uint8_t y_showpos,char dir,uint32_t input)
-{
-	uint8_t bcc = 0;	//
-	uint8_t i = 8;		// Anzahl payload 8 byte grundgerüst
-	char c = 0;			//
-	char* cx;
+	ltoa(input,c,10);
 
-	i += strlen(cx);
+	sprintf(c,"%7ld",+input);		// str = 8 Stellen mit Nullen vor der Zahl
+	
+ 	i += strlen(c);
+ 	bcc += (DC1 + i + 0x23 + 0x5A + dir + 0x2C + 0x2C + CR);
 
-	bcc += (DC1 + i + 0x23 + 0x5A + dir + 0x2C +x_showpos+y_showpos+ 0x2C + CR);	
 	i2c_start(ADDRESS + WRITE);
 
 	i2c_write(DC1);				// DC1
 	i2c_write(i);				// payload count
 	i2c_write(0x23);			// ESC
 	i2c_write(0x5A);			// "Z"eichen
-	i2c_write(dir);			// 
-	
-	itoa(x_showpos,cx,10);
-	i2c_write(x_showpos);
-	i2c_write(0x2C);
-	i2c_write(y_showpos);
-	i2c_write(0x2C);
-	
-	itoa(input,cx,10);
-	
-	for (uint8_t n=0; n != (i-8); n++)	// loop till all payloads written preload 8 vom grundgerüst
+	i2c_write(dir);				// Value-Direction
+
+	n=0;	
+	while (x[n] != '\0')
 		{
-uart_putc(cx[n]);				// debugging
-			i2c_write(cx[n]);
-			bcc += cx[n];		// add actual payload to checksum 
+			i2c_write(x[n]);
+			bcc += x[n];
+			n++;
+		}
+
+ 	i2c_write(0x2C);			// Komma
+	
+	n=0;
+	while (y[n] != '\0')
+		{
+			i2c_write(y[n]);
+			bcc += y[n];
+			n++;
 		}
 		
-		i2c_write(CR);	
-//uart_putc(bcc);
-	i2c_write(bcc);					// send checksum
+ 	i2c_write(0x2C);			// Komma
 
+	n=0;
+	while(c[n] != '\0')
+		{
+//			uart_putc(c[n]);			// debugging
+			i2c_write(c[n]);
+			bcc += c[n];				// add actual payload to checksum 
+			n++;
+		}
+		
+	i2c_write(CR);						// ! ENTER !
+	
 
-
+	i2c_write(bcc);						// send checksum
 
 	i2c_rep_start(ADDRESS + READ);		// open I2C to read
-	c = i2c_readNak();				// read one byte ACK or NAK
-uart_putc(c);
+	cc = i2c_readNak();					// read one byte ACK or NAK
 	i2c_stop();
 	
-	if ( c != ACK)					// if ACK ok, if NAK resend last command
+	if ( cc != ACK)						// if ACK ok, if NAK resend last command
 		{
 			return 0;
 		}
@@ -206,6 +227,7 @@ uint8_t edip_check_buffer()
  	}
 	return 0;
 }
+
 uint8_t edip_get_buffer(char* daten)
 {
 	char c = 0;
@@ -243,104 +265,168 @@ uint8_t edip_get_buffer(char* daten)
  	}
 	return 0;
 }
-uint8_t edip_check_input(char* daten)
-{
-	uart_puts(daten);
-	
-	if (daten[0] == ESC)
-	{
-		switch (daten[1])
-			{
-			case 'A':
-				switch (daten[3])
-					{
-					case '0':
-						uart_puts("STOPP!");
-						break;
-						
-					case '1':
-							uart_puts("Z-AUF");
-							while (daten[3] != '0')
-							{
-								axis_move(zAxis,1,M_FLAGS->AXIS_v1);
-							}
-						break;
-					
-					case '2':
-							uart_puts("Z-AB");
-							while (daten[3] != '0')
-							{
-								axis_move(zAxis,-1,M_FLAGS->AXIS_v1);
-							}
-						break;
-					
-					case '3':
-						uart_puts("X-LINKS");
-							while (daten[3] != '0')
-							{
-								axis_move(xAxis,-1,M_FLAGS->AXIS_v1);
-							}
-						break;
-					
-					case '4':
-						uart_puts("X-RECHTS");
-						while (daten[3] != '0')
-							{
-								axis_move(xAxis,1,M_FLAGS->AXIS_v1);
-							}
-						break;
-					
-					case '5':
-						uart_puts("Y-ZURUECK");
-						while (daten[3] != '0')
-							{
-								axis_move(yAxis,-1,M_FLAGS->AXIS_v1);
-							}
-						break;
-					
-					case '6':
-						uart_puts("Y-VOR");
-						while (daten[3] != '0')
-							{
-								axis_move(yAxis,1,M_FLAGS->AXIS_v1);
-							}
-						break;
-						
-					case 'R':
-						uart_puts("REF");
-						axis_ref();
-						break;
-						
-					case 'W':
-						uart_puts("WZG-Teaching");
-						break;
-					}
-				break;
-			
-			case 'B':
-				// Bargraph 1 Maschinenspeed
-				if (daten[3] == 1)
-				{
-					axis_set_speed(daten[4]);		// setzt die geschwindigkeit
 
-				}
-				break;
-				
-			case 'E':
-				// ERROR-Handling quit
-				if (daten[2] == 'Q')
+uint8_t edip_check_input(char* daten)
+{	
+	uart_puts(daten);
+	if (daten[0] == ESC)
+		{	
+			switch (daten[1])
 				{
-					uart_puts("Quittiert");
-					M_FLAGS->ERROR_GLOB = 0;
+				case 'A':
+					uart_puts("A_CMD");
+						switch (daten[2])
+							{
+							case 'A':
+								if (daten[3] == 'A')
+									{
+										M_FLAGS->AUTO_Action = 0;
+										M_FLAGS->ABORT_Action = 1;
+										uart_puts("ABBRUCH!");
+									}
+								if (daten[3] == 'B')
+									{
+										M_FLAGS->BREAK_Action = 1;
+										uart_puts("BREAK!");
+									}
+								if (daten[3] == 'S')
+									{
+										M_FLAGS->BREAK_Action = 0;
+										M_FLAGS->AUTO_Action = 1;
+										uart_puts("START!");
+									}
+								if (daten[3] == 'X')
+									{
+										usb_string_reset();
+									}
+								break;
+							case 'T':
+									M_FLAGS->GCODE_BOT = 0;
+									M_FLAGS->GCODE_TOP = 1;
+									uart_puts("TOP");
+								break;		
+							case 'B':
+									M_FLAGS->GCODE_TOP = 0;
+									M_FLAGS->GCODE_BOT = 1;
+									uart_puts("BOT");
+								break;
+							default:
+								break;
+							}
+						switch (daten[3])
+						{
+							case '1':	uart_puts("Z-AUF");							
+								while (daten[3] != '0')
+									{
+										axis_move(zAxis,1,M_FLAGS->AXIS_v1);
+									}
+								break;
+							case '2':	uart_puts("Z-AB");
+								while (daten[3] != '0')
+									{
+										axis_move(zAxis,-1,M_FLAGS->AXIS_v1);
+									}
+								break;						
+							case '3':	uart_puts("X-LINKS");
+								while (daten[3] != '0')
+									{
+										axis_move(xAxis,-1,M_FLAGS->AXIS_v1);
+									}
+								break;
+							case '4':	uart_puts("X-RECHTS");
+								while (daten[3] != '0')
+									{
+										axis_move(xAxis,1,M_FLAGS->AXIS_v1);
+									}
+								break;
+							case '5':	uart_puts("Y-ZURUECK");
+								while (daten[3] != '0')
+									{
+										axis_move(yAxis,-1,M_FLAGS->AXIS_v1);
+									}
+								break;
+							case '6':	uart_puts("Y-VOR");
+								while (daten[3] != '0')
+									{
+										axis_move(yAxis,1,M_FLAGS->AXIS_v1);
+									}
+								break;
+							case 'E':
+									if (M_FLAGS->GCODE_BOT == 1)
+										{
+											strncpy(FILENAME,FILE_BE,6);
+											M_FLAGS->GCODE_FILESET = 1;
+										}
+									if (M_FLAGS->GCODE_TOP == 1)
+										{
+											strncpy(FILENAME,FILE_TE,6);
+											M_FLAGS->GCODE_FILESET = 1;
+										}
+									uart_puts("ETCH");
+								break;
+							case 'D':
+									if (M_FLAGS->GCODE_BOT == 1)
+										{
+											strncpy(FILENAME,FILE_BD,6);
+											
+											M_FLAGS->GCODE_FILESET = 1;
+										}
+									if (M_FLAGS->GCODE_TOP == 1)
+										{
+											strncpy(FILENAME,FILE_TD,6);
+											M_FLAGS->GCODE_FILESET = 1;
+										}
+									uart_puts("DRILL");
+								break;
+							case 'R':
+								uart_puts("REF");
+								
+								if (axis_ref())
+									{
+										edip_msg(105);				// "Achsen referiert!"
+									}
+								break;
+							case 'W':
+								uart_puts("TOOL");
+								if (axis_tool_length())
+									{
+										M_FLAGS->EDIP_NEWPOS = 1;
+										edip_msg(106);				// "Werkzeug eingemessen!"
+									}
+								break;						
+							default:
+								break;
+						}	
+				case 'B':
+					if (daten[3] == 1)					// Bargraph 1 Maschinenspeed
+						{
+							if (axis_set_speed(daten[4]))
+								{
+									uart_puts("Bar1Set");
+								}
+						}
+					break;
+				case 'E':
+					if (daten[2] == 'Q')				// ERROR-Handling quit
+						{
+							M_FLAGS->ERROR_GLOB = 0;
+							uart_puts("Quittiert");
+						}
+					if (daten[2] == 'T')
+						{
+							M_FLAGS->TOOL_Change = 1;
+						}
+					break;
+				default:
+					break;
 				}
-				break;
-			}
-			
-			daten[0]='\0';				// STRING clear
-			
-	M_FLAGS->EDIP_ACTION = 0;			// ActionFlag clear
-	return 1;
-	
-	}
-	return 0;
+		uart_puts("SUCC");
+			daten[0]='\0';								// STRING clear		
+			M_FLAGS->EDIP_ACTION = 0;					// ActionFlag clear
+			return 1;
+		}
+	else
+		{
+			return 0;		
+		}
 }

@@ -28,65 +28,71 @@ Copyright:		(C)2012 Dennis Hohmann
 
 int8_t usb_get_state(void)
 {
-		uart1_gets(STRING,CMD_CR);
-		while (STRING[0] != NULL/* && unchecked == NULL*/)
-		{
-			uint8_t i= strlen(STRING);
-			STRING[--i]='\0';			// 0x0D weg scheiden!
+	uart1_gets(STRING,CMD_CR);
+	uart1_gets(STRING,CMD_CR);
+	uart1_gets(STRING,CMD_CR);
+	uart1_gets(STRING,CMD_CR);
+	uart1_gets(STRING,CMD_CR);
+	
+	STRING[0] = '\0';
+	
+	uart1_putc(CMD_CR);
+	_delay_ms(10);
+	uart1_gets(STRING,CMD_CR);
+	while (STRING[0] != NULL/* && unchecked == NULL*/)
+	{
+		uint8_t i= strlen(STRING);
+		STRING[--i]='\0';			// 0x0D weg scheiden!
 					
-			if (!strcmp(STRING, ">"))
-				{
-					M_FLAGS->USB_RDY=1;
-					uart_puts("DONE");
-					uart_putc(CMD_CR);
-					return 1;	
-				}
-			if (!strcmp(STRING, "DD2"))
-				{
-					M_FLAGS->USB_CON=1;
-					uart_puts("Disk Detected");
-					uart_putc(CMD_CR);	
-				}
-			if (!strcmp(STRING, "DR2"))
-				{
-					M_FLAGS->USB_CON=0;
-					uart_puts("Disk Removed");
-					uart_putc(CMD_CR);	
-				}
-			if (!strcmp(STRING, "NU"))
-				{
-					uart_puts("No Upgrade");
-					uart_putc(CMD_CR);	
-				}
-			if (!strcmp(STRING, "FI"))
-				{
-					uart_puts("File Invalid");
-					uart_putc(CMD_CR);
-				}
-			if (!strcmp(STRING, "BC"))
-				{
-					uart_puts("Bad Command");
-					uart_putc(CMD_CR);	
-				}
-			if (!strcmp(STRING, "CF"))
-				{
-					uart_puts("Command Failed");
-					uart_putc(CMD_CR);	
-				}
-		 	STRING[0]='\0';
-		}
-		if (M_FLAGS->USB_CON == 1)
+		if (!strcmp(STRING, ">"))
 			{
-				PORTD |= _BV(6);
-				PORTD &= ~_BV(5);
-			} 
-		else
-			{
-				PORTD &= ~_BV(6);
-				PORTD |= _BV(5);
-				return 0;
+				M_FLAGS->USB_RDY=1;
+				M_FLAGS->USB_CON=1;
+				uart_puts("DONE");
+				uart_putc(CMD_CR);
+				return 1;	
 			}
-}/*END*/
+		if (!strcmp(STRING, "DD2"))
+			{
+				M_FLAGS->USB_CON=1;
+				uart_puts("Disk Detected");
+				uart_putc(CMD_CR);	
+			}
+		if (!strcmp(STRING, "DR2"))
+			{
+				//M_FLAGS->USB_CON=0;
+				uart_puts("Disk Removed");
+				uart_putc(CMD_CR);	
+			}
+		if (!strcmp(STRING, "ND"))
+			{
+				M_FLAGS->USB_CON=0;
+				uart_puts("No Disk");
+				uart_putc(CMD_CR);	
+			}			
+		if (!strcmp(STRING, "NU"))
+			{
+				uart_puts("No Upgrade");
+				uart_putc(CMD_CR);	
+			}
+		if (!strcmp(STRING, "FI"))
+			{
+				uart_puts("File Invalid");
+				uart_putc(CMD_CR);
+			}
+		if (!strcmp(STRING, "BC"))
+			{
+				uart_puts("Bad Command");
+				uart_putc(CMD_CR);	
+			}
+		if (!strcmp(STRING, "CF"))
+			{
+				uart_puts("Command Failed");
+				uart_putc(CMD_CR);	
+			}
+		STRING[0]='\0';
+	}
+}
 
 int8_t usb_cmd_check(void)
 {
@@ -94,29 +100,69 @@ int8_t usb_cmd_check(void)
 
 int8_t usb_open_file(unsigned char* f2open)
 {
+	while (M_FLAGS->USB_RDY == 0)
+	{
+		usb_get_state();
+	}
+	
 		uart1_putc(CMD_OPR);
 		uart1_putc(CMD_SP);
 		uart1_puts(f2open);
 		uart1_putc(CMD_CR);
+	
 		_delay_ms(100);		// Zeit zum antworten vom Stick...
 		if (usb_get_state() == 1)
-		{
-			M_FLAGS->USB_FILE_OPEN = 1;
-			M_FLAGS->USB_FILE_EOF = 0;
-			M_FLAGS->USB_SEK = 0;
-			uart_puts("FILE ");
-			uart_puts(FILENAME);
-			uart_putc(CMD_CR);
-			return 1;
-		}		
-	else
+			{
+				M_FLAGS->USB_FILE_OPEN = 1;
+				M_FLAGS->USB_FILE_EOF = 0;
+				M_FLAGS->USB_SEK = 0;
+				uart_puts("FILE ");
+				uart_puts(FILENAME);
+				uart_putc(CMD_CR);
+				return 1;
+			}		
+		else
+			{
+				return 0;
+			}
+}
+int8_t usb_close_file(unsigned char* f2close)
+{
+	while (M_FLAGS->USB_RDY == 0)
 	{
-		return 0;
+		usb_get_state();
 	}
+		uart1_putc(CMD_CLF);
+		uart1_putc(CMD_SP);
+		uart1_puts(f2close);
+		uart1_putc(CMD_CR);
+	
+		_delay_ms(100);		// Zeit zum antworten vom Stick...
+		if (usb_get_state() == 1)
+			{
+				M_FLAGS->USB_FILE_OPEN = 0;
+				return 1;
+			}		
+		else
+			{
+				return 0;
+			}
 }
 
 void usb_get_dir(void)
 {	
+}
+
+void usb_string_reset()
+{
+	STRING[0] = uart1_getc();
+	STRING[0] = uart1_getc();
+	STRING[0] = uart1_getc();
+	STRING[0] = uart1_getc();
+	STRING[0] = uart1_getc();
+	
+	STRING[0] = '\0';
+	edip_msg(111);
 }
 
 void usb_set_sek(int16_t sektor)
@@ -159,10 +205,8 @@ int8_t usb_get_command(void)
 		}
 		else
 		{
+			
 			uart_puts("Code-ERROR!");	// Aufhängen wenn was falsches kommt...
-			while (1)
-			{
-			}
 			return 0;
 		}
 	}

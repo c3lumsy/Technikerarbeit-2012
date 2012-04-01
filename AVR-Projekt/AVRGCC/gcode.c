@@ -32,12 +32,12 @@ void gcode_cmd()
 	if (usb_get_block(1)==1)
 	{
 		if (STRING[0] == 'P')
-			{	// Pasuenzeit auslesen!
+			{	// Pausenzeit auslesen!
 				uart_puts("Warten: ");
-			i =	usb_get_value();
+				i =	usb_get_value();
 				uart_puts("us");
-			i /= 100;
-			_delay_ms(i);
+				i /= 100;
+				_delay_ms(i);
 			}
 		if (STRING[0] == 'Z')
 			{	// Z-Pos auslesen!
@@ -52,7 +52,11 @@ void gcode_cmd()
 				int32_t j = 0;
 		#ifdef PCmode 
 				uart_puts("X/Y:");
-				i =	usb_get_value();	
+				i =	usb_get_value();
+				if (M_FLAGS->GCODE_BOT) // Invert if Bottom-Layout
+					{
+						i *= -1;						
+					}
 				uart_puts(" / ");
 		#endif
 				usb_get_block(1);	// SPACE weg schneiden!
@@ -60,7 +64,7 @@ void gcode_cmd()
 					{	// Y-Pos auslesen!
 						j =	usb_get_value();
 					}
-				axis_move_interpol(0,0,i,j,M_FLAGS->AXIS_v1);
+				axis_rel_move_interpol(0,0,i,j,M_FLAGS->AXIS_v1);
 			}
 	}
 }
@@ -132,19 +136,26 @@ void gcode_m_check()
 				uart_putc(CMD_CR);
 				uart_puts("EOF");
 				M_FLAGS->USB_FILE_EOF = 1;
+				action_end();
+
 			break;
 		case 3:	
 		// Spindelstart CW
 				uart_puts("Spindelstart CW");
+				SpindelON;
 			break;
 		case 5:	
 		// Spindelstop
 				uart_puts("Spindelstop");
+				SpindelOFF;
 			break;
 		case 6:	
 		// Werkzeugwechsel
 				uart_puts("Werkzeugwechsel");
-				
+				M_FLAGS->BREAK_Action = 1;
+				M_FLAGS->TOOL_OK = 0;
+				edip_msg(150);
+				edip_msg(109);
 				pufferleer();
 			break;
 		default:

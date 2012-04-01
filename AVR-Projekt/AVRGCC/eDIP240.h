@@ -33,8 +33,7 @@ Copyright:		(C)2012 Dennis Hohmann
 
 extern uint8_t edip_put_CMD(uint8_t CMDTyp, char* daten);
 extern uint8_t edip_msg(uint8_t msgnr);
-extern uint8_t edip_put_text(uint8_t x_showpos,uint8_t y_showpos,char dir,char* daten);
-extern uint8_t edip_put_POS(int32_t xpos,int16_t ypos,int16_t zpos);
+extern uint8_t edip_put_pos(uint8_t x_showpos,uint8_t y_showpos,char dir,int32_t input);
 extern uint8_t edip_check_buffer();
 extern uint8_t edip_get_buffer(char * daten);
 extern uint8_t edip_check_input(char * daten);

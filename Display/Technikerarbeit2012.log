@@ -1,32 +1,36 @@
 Makro-Compiler V3.2 (01.12.2011) for
 EA eDIP128-6, EA eDIP160-7 and EA eDIP240-7
 
-Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.kmc>
-Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\konstanten.kmi>
-Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\fonts.kmi>
-Import Font-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\GENEVA12.FXT>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.kmc>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\konstanten.kmi>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\fonts.kmi>
+Import Font-File <Z:\GITHUB\Technikerarbeit 2012\Display\FONTS\GENEVA12.FXT>
             height: 12 dots, used codes: 32..216, 2875 bytes
-Import Font-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\FONTS\Chicag14.FXT>
+Import Font-File <Z:\GITHUB\Technikerarbeit 2012\Display\FONTS\Chicag14.FXT>
             height: 14 dots, used codes: 32..248, 2739 bytes
-Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\bilder.kmi>
-Import Picture-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\BITMAPS\Start.BMP>
-Import Picture-File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\BITMAPS\DREIECK.BMP>
-Open File <H:\Documents\GITHUB\Technikerarbeit 2012\Display\errors.kmi>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\bilder.kmi>
+Import Picture-File <Z:\GITHUB\Technikerarbeit 2012\Display\BITMAPS\Start.BMP>
+Import Picture-File <Z:\GITHUB\Technikerarbeit 2012\Display\BITMAPS\DREIECK.BMP>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\funktionen.kmi>
+Open File <Z:\GITHUB\Technikerarbeit 2012\Display\errors.kmi>
 
-Write EEPROM Upload File H:\Documents\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
+Write EEPROM Upload File Z:\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
 
 EEPROM Memory overview:
      System:       3650 bytes
    2 Fonts:        5614 bytes
    2 Pictures:     4036 bytes
-  14 Macros:        533 bytes
-   3 Touchmacros:   463 bytes
-   3 Menumacros:     71 bytes
+  19 Macros:        737 bytes
+   8 Touchmacros:   683 bytes
+   8 Menumacros:    355 bytes
  ----------------------------
-          sumary: 14367 bytes
+          sumary: 15075 bytes
 
 start eDIP-Simulation
 
-"eDIP Programmer" not found!
+connecting eDIP240-7 on "EA 9777-USB eDIP Programmer (COM4)"
 
-ERROR: cannot open COM3: !
+found: eDIP240-7 240x128, monochrome, Smallprotokoll, 32kB EEPROM, 115200 baud
+program file Z:\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
+Ok
+Ready: eDIP is programed,  15075 bytes used, 17693 bytes free

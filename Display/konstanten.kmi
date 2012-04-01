@@ -5,6 +5,30 @@ CodeTable: 1        ; use codetable 1 for standard *.FXT fonts with DOS-Code
 '€' = 128
 'äöüÄÖÜß' = $84,$94,$81, $8E,$99,$9A, $E1
 
+;=============================================================================
+; Macro Nummern
+
+MnPowerOn 	= 0
+TmStartMenu	= 1
+TmHauptMenu	= 2
+TmVersion	= 4
+
+TmHand		= 10
+TmAutoStart	= 11
+TmAutoBreak	= 12
+TmAutoAbort	= 13
+TmAutoConti	= 14
+
+MnClear	= 97
+MnWarnung	= 98
+MnQuitt	= 99
+
+MnWerkzeug	= 150	; Macro für Werkzeugwechsel	
+TmWzgOK	= 151	; WZG gewechselt, Quittung an AVR
+
+MnReturn	= 255
+
+
 ;------------------------------------------------------------------------------
 ; define constants
 
@@ -30,3 +54,5 @@ INVREPL = 5
 NOBLINK     = 0
 BLINKONOFF  = 1
 BLINKINVERS = 2
+
+

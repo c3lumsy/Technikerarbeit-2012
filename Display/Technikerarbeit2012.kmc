@@ -1,7 +1,7 @@
 eDIP240-7 "CNC-Controller"	; define eDIP240-7, "Projectname" max. 30 character
 
 SIMULATION			; start simulation
-COM3: 115200			; program eDIP on COMx with 115200 Baud
+COM4: 115200			; program eDIP on COMx with 115200 Baud
 
 USB: "eDIP Programmer"	; use EA 9777-1USB eDIP Programmer (only Windows 2000/XP) 
 				; using USB under WIN98/ME search for COM port (Control Panel/Gerätemanager)
@@ -14,19 +14,8 @@ USB: "eDIP Programmer"	; use EA 9777-1USB eDIP Programmer (only Windows 2000/XP)
 include <konstanten.kmi>
 include <fonts.kmi>
 include <bilder.kmi>
+include <funktionen.kmi>
 include <errors.kmi>
-
-;=============================================================================
-; Macro Nummern
-
-MnPowerOn 	= 0
-
-TmStartMenu	= 1
-TmHauptMenu	= 2
-TmHand		= 3
-TmVersion	= 4
-
-MnReturn	= 255
 
 ;=============================================================================
 ; Macro - Call
@@ -47,31 +36,6 @@ BrownOutMakro:		; wird nach einem Spannungseinbruch <4V ausgeführt
 ;=============================================================================
 ; Touch - Macros
 
-TouchMacro: TmHauptMenu
-	x=20
-	#DL
-	#AL 0,0
-	#UV 1
-	#AE 13		; Touch Frames
-	#AF 1		; Touch Fonts
-
-	#ZF 1		; Text Fonts
-
-;--- Menue-Bar ---
-	#NF 1		; set Menue font to CHICAGO14
-	#NY 1		; adding 2 additional dots between two menue items
-	#NW 0		; menu angle
-	#NT 1		; touch menu opens automatically
-
-	#AM 10,40,83,80,0,0,10, "UCAutomatik|!Bottem-Layout|!Top-Layout|!Bohren"		
-	#AM 83,40,156,80,0,0,20, "UCHand|Achsen verfahren|Referenzfahrt|!Werkzeug einmessen|!Gehe zu Position"			
-	#AM 156,40,230,80,0,0,30, "UCEinstellung|!Maschinengeschwindigkeit|!STATUS"
-
-	#AT 169,107,239,127, TmVersion,0, "CVersion"
-
-	#AT 10,85,83,125,MnQuitt,0, "CQuittieren"	;
-
-	#GR 45,0,240,36	; Frame for Error-Msg
 
 TouchMacro: TmVersion
 	#DL
@@ -80,35 +44,6 @@ TouchMacro: TmVersion
 	#ZL 2,2,"Technikerarbeit 2012|CNC-Steuerung|Dennis Hohmann||FTET4|Werner v. Siemens Schule|Mannheim||Version 1.0 15.02.2012"
 	#AT 169,107,239,127, TmHauptMenu,0, "Hauptmenu"
 
-Macro: TmHand
-	
-	stx = 70
-	sty = 40
-	
-	x = 50		; Tastenbreite
-	y = 20		; Tastenhöhe
-
-	#DL
-	#AL 0,0
-
-	#GR 45,0,240,36	; Frame for Error-Msg
-	#AT 99,107,169,127,MnQuitt,0, "CQuittieren"	;
-
-	#AT stx+x,sty,stx+x+x,sty+y,'5','0', "CY-Zurueck"		;
-	#AT stx+x,sty+y+y,stx+x+x,sty+y+y+y,'6','0', "CY-Vor"		;
-	#AT stx+x+x,sty+y,stx+x+x+x,sty+y+y,'4','0', "CX-Rechts"	;
-	#AT stx,sty+y,stx+x,sty+y+y,'3','0', "CX-Links"			;
-	#AT stx+x+x,sty,stx+x+x+x,sty+y,'1','0', "CZ-Auf"		;
-	#AT stx+x+x,sty+y+y,stx+x+x+x,sty+y+y+y,'2','0', "CZ-Ab"	;
-
-	#BO 1,15,40,50,110,0,100,1,4	;
-	#AB 1					;
-	#BA 1,25				;
-	#BS 1					;
-
-	#AT 169,107,239,127, TmHauptMenu,0, "CHauptmenu"
-	
-	#ZL 10,115,"Achsspeed"
 
 Macro: TmStartMenu
 	#DL
@@ -132,16 +67,3 @@ Macro: MnPowerOn		; Power-On/Reset Makro
 
 Macro: MnReturn
 	#MT TmHauptMenu
-
-;=============================================================================
-; Menue - Macros
-MenueMacro: 20	; Handbetrieb
-	#MN TmHand
-
-MenueMacro: 21	; Referenzfahrt
-	#ZL 50,2,"Referenzfahrt laeuft!" ; place text
-	#SB 27,"A0R"	; ESC A "Füllzeichen" "R"eferenz
-
-MenueMacro: 22	; WZG einmessen
-	#ZL 50,2,"Vermessung laeuft!" ; place text
-	#SB 27,"A0W"	; ESC A "Füllzeichen" "W"erkzeug

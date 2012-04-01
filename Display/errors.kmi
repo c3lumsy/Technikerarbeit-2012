@@ -1,23 +1,20 @@
-
 ;------------------------------------------------------------------------------
 ; used errors
 
-MnClear	= 97
-MnWarnung	= 98
-MnQuitt	= 99	
+
 
 Sm000	 	= 100	; Controller BEREIT!
 Sm001		= 101	; Keine CNC-Maschine gefunden!
 Sm002		= 102	; Kein USB-Stick gefunden!
 Sm003	 	= 103	; USB-Stick gefunden.
 Sm004		= 104	; USB-Stick gezogen!
-Sm005		= 105	;
-Sm006	 	= 106	;
-Sm007		= 107	;
-Sm008		= 108	;
-Sm009	 	= 109	;
-Sm010		= 110	;
-Sm011		= 111	;
+Sm005		= 105	; Achse referiert!
+Sm006	 	= 106	; Werkzeug eingemessen!
+Sm007		= 107	; Achse ausser Absolutbereich!
+Sm008		= 108	; Datei beendet!
+Sm009	 	= 109	; Werkzeug einspannen!
+Sm010		= 110	; ABBRUCH!
+Sm011		= 111	; BUFFER resetet!
 Sm012	 	= 112	;
 Sm013		= 113	;
 Sm014		= 114	;
@@ -48,29 +45,27 @@ Macro:	Sm004
 	#MN MnWarnung
 Macro:	Sm005
 	#MN MnClear
-	#ZL 50,2,"Meldung 105!" ; place text
-	#MN MnWarnung
+	#ZL 50,2,"Achse referiert!" ; place text
 Macro:	Sm006
 	#MN MnClear
-	#ZL 50,2,"Meldung 106!" ; place text
-	#MN MnWarnung
+	#ZL 50,2,"Werkzeug eingemessen!" ; place text
 Macro:	Sm007
 	#MN MnClear
-	#ZL 50,2,"Meldung 107!" ; place text
+	#ZL 50,2,"Achse ausser Absolutbereich!" ; place text
 	#MN MnWarnung
-
-
-Macro: MnClear
-	#RL 46,1,238,35
-	
-Macro: MnWarnung	
-	#UV SET
-	#UB BLINKONOFF
-	#UI 2,2,BmpWarn
-
-TouchMacro: MnQuitt	
-	#UV DELETE
-	#UB NOBLINK
-	#UI 2,2,BmpWarn
-	#MN 97
-	#SB 27,"EQ"	; send error quit
+Macro:	Sm008
+	#MN MnClear
+	#ZL 50,2,"Datei beendet!" ; place text
+	#MN MnWarnung
+Macro:	Sm009
+	#MN MnClear
+	#ZL 50,2,"Werkzeug einspannen: $toolsize false" ; place text
+	#MN MnWerkzeug
+Macro:	Sm010
+	#MN MnClear
+	#ZL 50,2,"ABBRUCH! Zurueck ins Hauptmenu!" ; place text
+	#MN MnWarnung
+Macro:	Sm011
+	#MN MnClear
+	#ZL 50,2,"USB-BUFFER resetet." ; place text
+	#MN MnWarnung

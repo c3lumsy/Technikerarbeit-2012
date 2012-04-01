@@ -33,6 +33,7 @@ Copyright:		(C)2012 Dennis Hohmann
 #define CMD_DIR		0x01		// Lists the current directory
 #define CMD_RD		0x04		// Read file <file>
 #define CMD_OPR		0x0E		// Opens a file for reading with "RDF"
+#define CMD_CLF		0x0A
 #define CMD_RDF		0x0B		// Reads the data of size from the current open file
 
 volatile unsigned char STRING[64];
@@ -41,11 +42,15 @@ volatile unsigned char STRING[64];
 
 
 extern int8_t usb_get_state(void);
+
 extern int8_t usb_open_file(unsigned char* f2open);
+extern int8_t usb_close_file(unsigned char* f2close);
+
 extern int8_t usb_get_command(void);
 extern int8_t usb_get_block(int8_t byte);
 extern void usb_set_sek(int16_t sektor);
 extern int32_t usb_get_value();
+extern void usb_string_reset();
 
 
 
