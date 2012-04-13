@@ -28,9 +28,6 @@ EEPROM Memory overview:
 
 start eDIP-Simulation
 
-connecting eDIP240-7 on "EA 9777-USB eDIP Programmer (COM4)"
+"eDIP Programmer" not found!
 
-found: eDIP240-7 240x128, monochrome, Smallprotokoll, 32kB EEPROM, 115200 baud
-program file Z:\GITHUB\Technikerarbeit 2012\Display\Technikerarbeit2012.EEP
-Ok
-Ready: eDIP is programed,  15075 bytes used, 17693 bytes free
+ERROR: cannot open COM4: !
