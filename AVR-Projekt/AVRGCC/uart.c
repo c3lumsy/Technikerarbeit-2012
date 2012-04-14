@@ -639,10 +639,17 @@ void uart1_gets(char* BUFFER, char separator)
 	uint8_t NextChar;
 	uint8_t counter = 0;
 
-	BUFFER[0]='\0';											// BUFFER leeren!
-	NextChar = uart1_getc();								// Warte auf und empfange das n‰chste Zeichen
-	NextChar = (unsigned char)NextChar;						// Sammle solange Zeichen, bis:
-	while (NextChar != separator && NextChar != NULL)		// das String Ende Zeichen kam
+// BUFFER leeren!
+	BUFFER[0]='\0';
+    
+// Warte auf und empfange das n‰chste Zeichen
+	NextChar = uart1_getc();
+    
+// Sammle solange Zeichen, bis:    
+	NextChar = (unsigned char)NextChar;		
+    
+// das String Ende Zeichen kam
+	while (NextChar != separator && NextChar != NULL)		
 	{													
 		while (NextChar != separator && NextChar != NULL)
 		{
@@ -655,8 +662,11 @@ void uart1_gets(char* BUFFER, char separator)
 					NextChar = (unsigned char)NextChar;
 				}
 		}
-		BUFFER[counter++] = separator;						// CMD_CR wieder anh‰ngen!
-		BUFFER[counter++] = '\0';							// C-Standart-String-Terminierung
+// CMD_CR wieder anhängen!
+		BUFFER[counter++] = separator;
+        
+// C-Standart-String-Terminierung
+		BUFFER[counter++] = '\0';
 	}
 }
 
