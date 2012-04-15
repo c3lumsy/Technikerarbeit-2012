@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root text="&#34;USB Sequenz auswerten&#34;" comment="" color="ffffff" type="sub" style="nice">
+	<children>
+		<case text="&#34;STRING[0]?&#34;,&#34;&#34;&#34;N&#34;&#34;&#34;,&#34;&#34;&#34;0x0D&#34;&#34;&#34;,&#34;default&#34;" comment="" color="ffffff">
+			<qCase>
+				<instruction text="&#34;Lese 5 Byte von STRING, String to Integer&#34;,&#34;schreibe nach &#34;&#34;LastStep&#34;&#34;&#34;" comment="" color="ffffff" rotated="0"></instruction>
+				<case text="&#34;STRING[7]&#34;,&#34;&#34;&#34;(&#34;&#34;&#34;,&#34;&#34;&#34;G&#34;&#34;&#34;,&#34;&#34;&#34;M&#34;&#34;&#34;,&#34;&#34;&#34;T&#34;&#34;&#34;,&#34;default&#34;" comment="" color="ffffff">
+					<qCase>
+						<instruction text="&#34;Ausgabe:&#34;,&#34;&#34;&#34;Kommentar&#34;&#34;&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<instruction text="&#34;STRING lesen bis&#34;,&#34;&#34;&#34;0x0D&#34;&#34;&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;gCode Auswerten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;gCode Auswerten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;gCode Auswerten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;STRING löschen!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<instruction text="&#34;Ausgabe:&#34;,&#34;&#34;&#34;gCode ERROR&#34;&#34;&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+				</case>
+			</qCase>
+			<qCase>
+				<instruction text="&#34;STRING zu Ende!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+			</qCase>
+			<qCase>
+				<instruction text="&#34;STRING löschen!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+				<instruction text="&#34;Ausgabe:&#34;,&#34;&#34;&#34;gCode ERROR&#34;&#34;&#34;" comment="" color="ffffff" rotated="0"></instruction>
+			</qCase>
+		</case>
+		<instruction text="&#34;USB Sequenz auswerten&#34;,&#34;beenden&#34;" comment="" color="ffffff" rotated="0"></instruction>
+	</children>
+</root>
