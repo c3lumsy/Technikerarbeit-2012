@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root text="&#34;Main-Schleife&#34;" comment="&#34;&#34;" color="ffffff" type="program" style="nice">
+	<children>
+		<while text="&#34;main();&#34;" comment="" color="ffffff">
+			<qWhile>
+				<alternative text="&#34;Störung Vorhanden?&#34;" comment="" color="ffffff">
+					<qTrue>
+						<instruction text="&#34;Meldung ausgeben&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qTrue>
+					<qFalse>
+						<instruction text="&#34;keine Aktion!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qFalse>
+				</alternative>
+				<alternative text="&#34;Datei öffnen?&#34;" comment="" color="ffffff">
+					<qTrue>
+						<instruction text="&#34;Datei FILENAME öffnen&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qTrue>
+					<qFalse>
+						<instruction text="&#34;keine Aktion!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qFalse>
+				</alternative>
+				<alternative text="&#34;Werkzeug OK?&#34;" comment="" color="ffffff">
+					<qTrue>
+						<instruction text="&#34;Werkzeug wechseln&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<instruction text="&#34;Werkzeug einmessen&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qTrue>
+					<qFalse>
+						<instruction text="&#34;keine Aktion!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qFalse>
+				</alternative>
+				<alternative text="&#34;Automatik?&#34;" comment="&#34;&#34;" color="ffffff">
+					<qTrue>
+						<instruction text="&#34;Automatik-Ablauf&#34;" comment="&#34;&#34;" color="ffffff" rotated="0"></instruction>
+					</qTrue>
+					<qFalse>
+						<alternative text="&#34;Hand?&#34;" comment="&#34;&#34;" color="ffffff">
+							<qTrue>
+								<instruction text="&#34;Hand-Ablauf&#34;" comment="&#34;&#34;" color="ffffff" rotated="0"></instruction>
+							</qTrue>
+							<qFalse>
+								<instruction text="&#34;Abbruch der Aktion.&#34;" comment="&#34;&#34;" color="ffffff" rotated="0"></instruction>
+							</qFalse>
+						</alternative>
+					</qFalse>
+				</alternative>
+				<alternative text="&#34;Neue Pos der Achsen?&#34;" comment="&#34;&#34;" color="ffffff">
+					<qTrue>
+						<instruction text="&#34;Position ausgeben&#34;" comment="&#34;&#34;" color="ffffff" rotated="0"></instruction>
+					</qTrue>
+					<qFalse>
+						<instruction text="&#34;keine Aktion!&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qFalse>
+				</alternative>
+				<instruction text="&#34;LIFEBIT toggeln&#34;" comment="&#34;&#34;" color="ffffff" rotated="0"></instruction>
+			</qWhile>
+		</while>
+	</children>
+</root>

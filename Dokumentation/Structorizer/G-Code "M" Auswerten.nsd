@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root text="&#34;G-Code &#34;&#34;M&#34;&#34; Auswerten&#34;" comment="" color="ffffff" type="sub" style="nice">
+	<children>
+		<case text="&#34;STRING[7]&#34;,&#34;&#34;&#34;G&#34;&#34;&#34;,&#34;&#34;&#34;M&#34;&#34;&#34;,&#34;default&#34;" comment="" color="ffffff">
+			<qCase>
+				<instruction text="&#34;siehe gCode &#34;&#34;G&#34;&#34; Auswertung&#34;" comment="" color="ffffff" rotated="0"></instruction>
+			</qCase>
+			<qCase>
+				<case text="&#34;STRING[8] &amp; STRING[9] to Integer&#34;,&#34;&#34;&#34;00&#34;&#34;&#34;,&#34;&#34;&#34;02&#34;&#34;&#34;,&#34;&#34;&#34;03&#34;&#34;&#34;,&#34;&#34;&#34;05&#34;&#34;&#34;,&#34;&#34;&#34;06&#34;&#34;&#34;,&#34;default&#34;" comment="" color="ffffff">
+					<qCase>
+						<instruction text="&#34;Programm&#34;,&#34;Pause&#34;,&#34;&#34;,&#34;Pause&#34;,&#34;setzten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<while text="&#34;Pause&#34;" comment="" color="ffffff">
+							<qWhile>
+								<instruction text="&#34;Warten auf&#34;,&#34;Fortsetzen&#34;" comment="" color="ffffff" rotated="0"></instruction>
+							</qWhile>
+						</while>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;Programm&#34;,&#34;Ende&#34;,&#34;&#34;,&#34;EOF&#34;,&#34;setzten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;Spindel&#34;,&#34;rechtslauf&#34;,&#34;&#34;,&#34;OUT&#34;,&#34;setzten&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<while text="&#34;StartUp-Time&#34;,&#34;Spindelanlauf&#34;" comment="" color="ffffff">
+							<qWhile>
+								<instruction text="&#34;Warten auf&#34;,&#34;Spindel&#34;" comment="" color="ffffff" rotated="0"></instruction>
+							</qWhile>
+						</while>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;Spindel&#34;,&#34;STOP&#34;,&#34;&#34;,&#34;OUT&#34;,&#34;löschen&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;Werkzeug&#34;,&#34;wechseln&#34;,&#34;&#34;,&#34;Durchmesser&#34;,&#34;einlesen&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<instruction text="&#34;Wechsel-&#34;,&#34;Position&#34;,&#34;anfahren&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<instruction text="&#34;Soll-Durchmesser&#34;,&#34;ausgeben&#34;" comment="" color="ffffff" rotated="0"></instruction>
+						<while text="&#34;WZG nicht gewechselt&#34;" comment="" color="ffffff">
+							<qWhile>
+								<instruction text="&#34;Warten auf&#34;,&#34;WZG OK&#34;" comment="" color="ffffff" rotated="0"></instruction>
+							</qWhile>
+						</while>
+						<instruction text="&#34;Letzte Position&#34;,&#34;anfahren&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+					<qCase>
+						<instruction text="&#34;Ausgabe:&#34;,&#34;&#34;&#34;unbekannter Code&#34;&#34;&#34;,&#34;&#34;,&#34;keine Aktion&#34;" comment="" color="ffffff" rotated="0"></instruction>
+					</qCase>
+				</case>
+			</qCase>
+			<qCase>
+				<instruction text="&#34;Ausgabe:&#34;,&#34;&#34;&#34;unbekannter Code&#34;&#34;&#34;,&#34;&#34;,&#34;keine Aktion&#34;" comment="" color="ffffff" rotated="0"></instruction>
+			</qCase>
+		</case>
+	</children>
+</root>

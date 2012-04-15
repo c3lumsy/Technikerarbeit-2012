@@ -11,7 +11,8 @@ Hardware:		AVR ATmega1284P @ 18,432 MHz
 						
 Author:			Dennis Hohmann
 Email:			hohmannd@web.de
-Copyright:		(C)2012 Dennis Hohmann
+				
+				Open Source
 ************************************************************************/ 
 #include "globdef.h"
 
