@@ -25,7 +25,7 @@ UsedLibrary="/Applications/OLD.EAGLE/lbr/rcl.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="121 163 690 522"
+Loc="180 107 749 466"
 State=2
 Number=0
 
